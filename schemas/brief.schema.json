@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CNI72hBrief",
+  "type": "object",
+  "required": [
+    "brief_id",
+    "window",
+    "executive_brief",
+    "technology_signal_radar",
+    "contradictions",
+    "process_constraint_trends",
+    "network_metric_trends",
+    "recommended_actions",
+    "quality_report"
+  ],
+  "properties": {
+    "brief_id": {
+      "type": "string"
+    },
+    "window": {
+      "type": "object",
+      "required": [
+        "start",
+        "end"
+      ]
+    },
+    "executive_brief": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "most_actionable_technology": {
+      "type": "string"
+    },
+    "biggest_risk": {
+      "type": "string"
+    },
+    "recommended_decision": {
+      "type": "string"
+    },
+    "technology_signal_radar": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "contradictions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "process_constraint_trends": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "network_metric_trends": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "recommended_actions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "budget_report": {
+      "type": "object"
+    },
+    "quality_report": {
+      "type": "object"
+    },
+    "human_review_checklist": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,88 @@
+// OpenClaw experimental config template for ZYW Insight Agent.
+// 建议先运行 `openclaw onboard --auth-choice openrouter-api-key`，再把本文件中的字段合并到 ~/.openclaw/openclaw.json。
+// 不要把真实 API key 写入此文件。
+{
+  identity: {
+    name: "ZYW Insight",
+    theme: "constraint-aware network technology insight agent",
+    emoji: "🦞",
+  },
+
+  env: {
+    shellEnv: { enabled: true, timeoutMs: 15000 },
+  },
+
+  agents: {
+    defaults: {
+      workspace: "~/.openclaw/workspace-zyw-insight",
+      model: {
+        // 用 OpenClaw / OpenRouter 验证后的 explicit model ID 替换。
+        primary: "openrouter/<verified-brief-or-balanced-model-id>",
+        fallbacks: ["openrouter/<verified-fallback-model-id>"],
+      },
+      models: {
+        "openrouter/<verified-low-cost-model-id>": { alias: "discovery" },
+        "openrouter/<verified-long-context-model-id>": { alias: "analysis" },
+        "openrouter/<verified-reasoning-model-id>": { alias: "critic" },
+        "openrouter/<verified-brief-or-balanced-model-id>": { alias: "brief" },
+      },
+      skills: ["cni-literature-analysis", "cni-72h-brief"],
+      sandbox: {
+        mode: "non-main",
+        scope: "agent",
+      },
+    },
+    list: [
+      {
+        id: "zyw-insight",
+        default: true,
+        name: "ZYW Insight Agent",
+        workspace: "~/.openclaw/workspace-zyw-insight",
+      },
+    ],
+  },
+
+  skills: {
+    load: {
+      extraDirs: ["~/.openclaw/workspace-zyw-insight/skills"],
+    },
+  },
+
+  session: {
+    dmScope: "per-channel-peer",
+    threadBindings: { enabled: true, idleHours: 24, maxAgeHours: 0 },
+    reset: { mode: "daily", atHour: 4, idleMinutes: 120 },
+  },
+
+  channels: {
+    telegram: {
+      enabled: false,
+      dmPolicy: "pairing",
+      groups: { "*": { requireMention: true } },
+    },
+    slack: {
+      enabled: false,
+      dmPolicy: "allowlist",
+    },
+  },
+
+  cron: {
+    enabled: true,
+    maxConcurrentRuns: 1,
+    sessionRetention: "24h",
+    runLog: { maxBytes: "2mb", keepLines: 2000 },
+  },
+
+  hooks: {
+    enabled: false,
+    path: "/hooks",
+    allowRequestSessionKey: false,
+    allowedSessionKeyPrefixes: ["hook:"],
+  },
+
+  logging: {
+    level: "info",
+    consoleLevel: "info",
+    redactSensitive: "tools",
+  },
+}

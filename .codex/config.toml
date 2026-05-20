@@ -1,0 +1,22 @@
+# Project-scoped Codex CLI configuration for ZYW Insight Agent.
+# Keep provider/auth/model defaults in ~/.codex/config.toml.
+# This file is loaded only after you trust this project.
+
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+allow_login_shell = false
+project_doc_fallback_filenames = ["TEAM_GUIDE.md", ".agents.md"]
+project_doc_max_bytes = 65536
+
+[sandbox_workspace_write]
+# Default: keep network disabled for local generated commands.
+# Enable only when Codex is explicitly working on dependency installation or live docs checks.
+network_access = false
+exclude_slash_tmp = false
+exclude_tmpdir_env_var = false
+
+# Codex discovers project-scoped custom agents from .codex/agents/*.toml.
+# Keep concurrency low because subagents consume additional tokens.
+[agents]
+max_threads = 3
+max_depth = 1

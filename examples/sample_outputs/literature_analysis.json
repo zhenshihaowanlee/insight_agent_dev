@@ -1,0 +1,112 @@
+{
+  "analysis_id": "sample",
+  "source": {
+    "title": "Sample Technical Paper Placeholder"
+  },
+  "one_sentence_conclusion": "This placeholder is not suitable for strong technical conclusions.",
+  "problem_background": "Datacenter network latency.",
+  "core_idea": "Unknown.",
+  "innovation_points": [],
+  "mechanism": {},
+  "constraints": [
+    {
+      "name": "Switch buffer",
+      "type": "chip",
+      "explicitly_stated": false,
+      "performance_impact": "tail latency",
+      "hardness": "semi-hard",
+      "degradation_consequence": "tail latency may worsen"
+    }
+  ],
+  "constraint_dependency": [],
+  "degraded_process_counterfactual": {
+    "verdict": "unknown",
+    "conditions": [],
+    "failure_modes": [],
+    "compensation_mechanisms": []
+  },
+  "network_impact_vector": {
+    "Latency": {
+      "impact": "?",
+      "evidence": "unknown",
+      "risk": "insufficient evidence"
+    },
+    "Jitter/IPDV": {
+      "impact": "?",
+      "evidence": "unknown",
+      "risk": "insufficient evidence"
+    },
+    "Bandwidth/Capacity": {
+      "impact": "?",
+      "evidence": "unknown",
+      "risk": "insufficient evidence"
+    },
+    "Reliability": {
+      "impact": "?",
+      "evidence": "unknown",
+      "risk": "insufficient evidence"
+    },
+    "Security": {
+      "impact": "?",
+      "evidence": "unknown",
+      "risk": "insufficient evidence"
+    },
+    "Operations": {
+      "impact": "?",
+      "evidence": "unknown",
+      "risk": "insufficient evidence"
+    },
+    "BER/Error": {
+      "impact": "?",
+      "evidence": "unknown",
+      "risk": "insufficient evidence"
+    },
+    "Scalability": {
+      "impact": "?",
+      "evidence": "unknown",
+      "risk": "insufficient evidence"
+    },
+    "Cost/Power": {
+      "impact": "?",
+      "evidence": "unknown",
+      "risk": "insufficient evidence"
+    }
+  },
+  "evidence_quality": {
+    "real_deployment": "D",
+    "physical_testbed": "D",
+    "simulation": "D",
+    "baseline": "D",
+    "ablation": "D",
+    "sensitivity_analysis": "D",
+    "failure_analysis": "D",
+    "reproducibility": "D"
+  },
+  "comparison_to_existing": [],
+  "hidden_assumptions_and_risks": [
+    "No tail metrics."
+  ],
+  "security_and_operations": {
+    "security": "unknown",
+    "operations": "unknown",
+    "reliability": "unknown"
+  },
+  "reproducibility": {
+    "status": "unknown"
+  },
+  "insights": {
+    "direct": "Evidence is insufficient.",
+    "counterfactual": "Cannot judge degraded process behavior.",
+    "strategic": "Use as eval placeholder only."
+  },
+  "strategic_meaning": "None.",
+  "score": {
+    "total": 30,
+    "dimensions": {}
+  },
+  "recommended_action": "C",
+  "follow_up_experiments": [
+    "Add real paper and rerun analysis."
+  ],
+  "conclusion_strength": "weak"
+}

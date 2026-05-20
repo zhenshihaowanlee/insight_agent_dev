@@ -1,0 +1,39 @@
+# Codex CLI project-local config example for ZYW Insight Agent.
+# Copy to `.codex/config.toml` after you trust this repository.
+# Values may be overridden by CLI flags, profiles, user config, or managed config.
+
+model = "gpt-5.5"
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+web_search = "cached"
+model_reasoning_effort = "high"
+personality = "pragmatic"
+
+# Keep command environment narrow. Add variables only when needed.
+[shell_environment_policy]
+include_only = ["PATH", "HOME", "LANG", "LC_ALL", "PYTHONPATH", "VIRTUAL_ENV"]
+
+# Network remains off for shell commands unless explicitly enabled.
+# Enable only for dependency installation or documentation checks you approve.
+[sandbox_workspace_write]
+network_access = false
+
+[features]
+shell_snapshot = true
+multi_agent = false
+undo = true
+
+[profiles.read_only_review]
+approval_policy = "never"
+sandbox_mode = "read-only"
+model_reasoning_effort = "high"
+
+[profiles.poc_dev]
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+model_reasoning_effort = "high"
+
+[profiles.danger_vm_only]
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+model_reasoning_effort = "high"

@@ -1,0 +1,45 @@
+# Codex CLI execution rules for this repository.
+# These rules apply to commands Codex asks to run outside the sandbox.
+# Restart Codex after editing.
+
+prefix_rule(
+    pattern = ["git", "push"],
+    decision = "prompt",
+    justification = "Publishing code must remain a human decision.",
+    match = ["git push", "git push origin main"],
+)
+
+prefix_rule(
+    pattern = ["git", "clean", "-fdx"],
+    decision = "forbidden",
+    justification = "Destructive cleanup can delete local outputs. Use targeted rm of generated files instead.",
+    match = ["git clean -fdx"],
+)
+
+prefix_rule(
+    pattern = ["rm", "-rf", "/"],
+    decision = "forbidden",
+    justification = "Never allow recursive deletion of the filesystem root.",
+    match = ["rm -rf /"],
+)
+
+prefix_rule(
+    pattern = ["openclaw", "onboard"],
+    decision = "prompt",
+    justification = "Provider onboarding may alter machine-level OpenClaw credentials/config.",
+    match = ["openclaw onboard --auth-choice openrouter-api-key"],
+)
+
+prefix_rule(
+    pattern = ["openclaw", "config"],
+    decision = "prompt",
+    justification = "OpenClaw config changes can affect production routing and should be reviewed.",
+    match = ["openclaw config schema", "openclaw config edit"],
+)
+
+prefix_rule(
+    pattern = ["npm", "install", "-g"],
+    decision = "prompt",
+    justification = "Global installs should be approved explicitly.",
+    match = ["npm install -g @openai/codex", "npm install -g openclaw@latest"],
+)

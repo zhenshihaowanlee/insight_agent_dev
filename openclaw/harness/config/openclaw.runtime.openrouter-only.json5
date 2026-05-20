@@ -1,0 +1,136 @@
+// ZYW Insight OpenClaw runtime config template.
+// Runtime model provider is OpenRouter only.
+// Replace placeholder model IDs after checking current OpenRouter availability and pricing.
+{
+  identity: {
+    name: "ZYW Insight",
+    theme: "constraint-aware network technology insight",
+    emoji: "🦞",
+  },
+
+  env: {
+    shellEnv: { enabled: false, timeoutMs: 15000 },
+  },
+
+  agents: {
+    defaults: {
+      workspace: "~/.openclaw/workspace/zyw-insight",
+      sandbox: { mode: "non-main", scope: "agent" },
+      skills: [
+        "cni-source-triage",
+        "cni-literature-analysis",
+        "cni-constraint-critic",
+        "cni-72h-brief",
+      ],
+      models: {
+        "openrouter/<verified-low-cost-model-id>": { alias: "discovery" },
+        "openrouter/<verified-long-context-model-id>": { alias: "analysis" },
+        "openrouter/<verified-reasoning-model-id>": { alias: "critic" },
+        "openrouter/<verified-brief-model-id>": { alias: "brief" },
+        "openrouter/<verified-premium-review-model-id>": { alias: "final-review" },
+      },
+    },
+    list: [
+      {
+        id: "source-scout",
+        name: "Source Scout",
+        workspace: "~/.openclaw/workspace/zyw-insight",
+        model: { primary: "openrouter/<verified-low-cost-model-id>" },
+        skills: ["cni-source-triage"],
+      },
+      {
+        id: "cni-analyzer",
+        name: "CNI Analyzer",
+        workspace: "~/.openclaw/workspace/zyw-insight",
+        model: { primary: "openrouter/<verified-long-context-model-id>" },
+        skills: ["cni-literature-analysis"],
+      },
+      {
+        id: "constraint-critic",
+        name: "Constraint Critic",
+        workspace: "~/.openclaw/workspace/zyw-insight",
+        model: { primary: "openrouter/<verified-reasoning-model-id>" },
+        skills: ["cni-constraint-critic"],
+      },
+      {
+        id: "brief-synthesizer",
+        name: "Brief Synthesizer",
+        default: true,
+        workspace: "~/.openclaw/workspace/zyw-insight",
+        model: { primary: "openrouter/<verified-brief-model-id>" },
+        skills: ["cni-72h-brief"],
+      },
+      {
+        id: "ops-guardian",
+        name: "Ops Guardian",
+        workspace: "~/.openclaw/workspace/zyw-insight",
+        model: { primary: "openrouter/<verified-low-cost-model-id>" },
+        skills: [],
+      },
+    ],
+  },
+
+  skills: {
+    load: {
+      extraDirs: ["~/.openclaw/skills"],
+    },
+  },
+
+  cron: {
+    enabled: true,
+    maxConcurrentRuns: 1,
+    sessionRetention: "72h",
+    runLog: { maxBytes: "5mb", keepLines: 5000 },
+    entries: [
+      {
+        id: "zyw-72h-brief-draft",
+        enabled: false,
+        schedule: "0 */72 * * *",
+        agentId: "brief-synthesizer",
+        promptFile: "~/.openclaw/workspace/zyw-insight/prompts/72h_brief.prompt.md",
+        deliver: false,
+      },
+    ],
+  },
+
+  channels: {
+    telegram: {
+      enabled: false,
+      dmPolicy: "allowlist",
+      allowFrom: [],
+      groups: { "*": { requireMention: true } },
+    },
+    slack: {
+      enabled: false,
+      dmPolicy: "allowlist",
+      groupPolicy: "allowlist",
+    },
+    email: {
+      enabled: false,
+      mode: "draft-only",
+    },
+  },
+
+  hooks: {
+    enabled: false,
+    token: "${OPENCLAW_HOOKS_TOKEN}",
+    path: "/hooks",
+    defaultSessionKey: "hook:ingress",
+    allowRequestSessionKey: false,
+    allowedSessionKeyPrefixes: ["hook:"],
+    mappings: [
+      {
+        match: { path: "zyw-source" },
+        action: "agent",
+        agentId: "source-scout",
+        deliver: false,
+      },
+    ],
+  },
+
+  logging: {
+    level: "info",
+    consoleLevel: "info",
+    redactSensitive: "tools",
+  },
+}

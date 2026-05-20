@@ -1,0 +1,28 @@
+# Optional high-trust Codex CLI project config.
+# Use only in a dedicated local dev environment after backing up ~/.openclaw.
+# Safer launch command is usually:
+#   codex --sandbox workspace-write --add-dir "$HOME/.openclaw" --ask-for-approval on-request
+# If you intentionally want no sandbox, use the command in CODEX_HIGH_PRIVILEGE_OPENCLAW_RUNBOOK.md.
+
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+allow_login_shell = false
+project_doc_max_bytes = 131072
+
+[sandbox_workspace_write]
+writable_roots = ["~/.openclaw", "~/.config/openclaw"]
+network_access = true
+exclude_slash_tmp = false
+exclude_tmpdir_env_var = false
+
+[shell_environment_policy]
+inherit = "core"
+ignore_default_excludes = false
+exclude = ["*KEY*", "*SECRET*", "*TOKEN*", "OPENROUTER_API_KEY", "OPENAI_API_KEY"]
+include_only = ["PATH", "HOME", "SHELL", "USER", "TMPDIR"]
+
+# Codex discovers project-scoped custom agents from .codex/agents/*.toml.
+# Keep concurrency low in high-trust mode to reduce blast radius and token cost.
+[agents]
+max_threads = 3
+max_depth = 1

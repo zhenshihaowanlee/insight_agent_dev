@@ -1,0 +1,21 @@
+# Copy selected fields into ~/.codex/config.toml.
+# Do not commit real secrets or machine-specific auth settings.
+
+# Pick your default Codex model from models available to your account.
+# You can also switch interactively with /model in the Codex CLI.
+model = "gpt-5.5"
+model_verbosity = "medium"
+model_reasoning_summary = "none"
+
+# Interactive local development default.
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+allow_login_shell = false
+
+[sandbox_workspace_write]
+network_access = false
+exclude_slash_tmp = false
+exclude_tmpdir_env_var = false
+
+# Optional: raise instruction discovery size if your project AGENTS.md grows.
+project_doc_max_bytes = 65536

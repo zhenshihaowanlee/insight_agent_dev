@@ -1,0 +1,5 @@
+// Deprecated general production template.
+// Use openclaw/harness/config/openclaw.runtime.openrouter-only.json5 for the clarified runtime boundary.
+{
+  include: "./harness/config/openclaw.runtime.openrouter-only.json5",
+}

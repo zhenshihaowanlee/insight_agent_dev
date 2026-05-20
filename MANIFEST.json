@@ -1,0 +1,436 @@
+{
+  "package": "zyw_insight_openclaw_agent",
+  "variant": "codex-cli-high-privilege-openclaw-harness",
+  "files": [
+    {
+      "path": ".agents/skills/cni-72h-brief/SKILL.md",
+      "bytes": 852,
+      "sha256": "0537f8e5054285ac"
+    },
+    {
+      "path": ".agents/skills/cni-constraint-critic/SKILL.md",
+      "bytes": 1028,
+      "sha256": "8eb4db3236b99454"
+    },
+    {
+      "path": ".agents/skills/cni-literature-analysis/SKILL.md",
+      "bytes": 1177,
+      "sha256": "e8a99825c85d96e6"
+    },
+    {
+      "path": ".agents/skills/cni-source-triage/SKILL.md",
+      "bytes": 1131,
+      "sha256": "bcda495428700440"
+    },
+    {
+      "path": ".codex/agents/budget_guardian.toml",
+      "bytes": 82,
+      "sha256": "772c949c7ce76994"
+    },
+    {
+      "path": ".codex/agents/runtime_boundary_reviewer.toml",
+      "bytes": 208,
+      "sha256": "32539a0fbddde01a"
+    },
+    {
+      "path": ".codex/agents/schema_guardian.toml",
+      "bytes": 82,
+      "sha256": "772c949c7ce76994"
+    },
+    {
+      "path": ".codex/config.high-trust-openclaw.toml",
+      "bytes": 1071,
+      "sha256": "6c64339d09426c66"
+    },
+    {
+      "path": ".codex/config.toml",
+      "bytes": 1206,
+      "sha256": "a87f56c3c1b0a249"
+    },
+    {
+      "path": ".codex/config.toml.example",
+      "bytes": 1162,
+      "sha256": "36ef1da457b42f17"
+    },
+    {
+      "path": ".codex/prompts/01_start_poc.md",
+      "bytes": 726,
+      "sha256": "c52749dbc77b6168"
+    },
+    {
+      "path": ".codex/prompts/02_openclaw_integration.md",
+      "bytes": 640,
+      "sha256": "607bb9405fe05601"
+    },
+    {
+      "path": ".codex/prompts/03_review_budget_quality.md",
+      "bytes": 546,
+      "sha256": "1968ae19a6d23eb7"
+    },
+    {
+      "path": ".codex/prompts/04_high_privilege_openclaw_harness.md",
+      "bytes": 1235,
+      "sha256": "575202065727a73d"
+    },
+    {
+      "path": ".codex/rules/default.rules",
+      "bytes": 1471,
+      "sha256": "648f0b3e7b042932"
+    },
+    {
+      "path": ".env.example",
+      "bytes": 719,
+      "sha256": "e70db6ed80246f27"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 5251,
+      "sha256": "bdbb6456a979bb37"
+    },
+    {
+      "path": "CODEX_CLI_RUNBOOK.md",
+      "bytes": 5272,
+      "sha256": "cc8ed7ceefdb818d"
+    },
+    {
+      "path": "CODEX_HIGH_PRIVILEGE_OPENCLAW_RUNBOOK.md",
+      "bytes": 1753,
+      "sha256": "078cd854bc6e379d"
+    },
+    {
+      "path": "MANIFEST.json",
+      "bytes": 6133,
+      "sha256": "69f185c05a667489"
+    },
+    {
+      "path": "Makefile",
+      "bytes": 542,
+      "sha256": "46dd164e10eb4965"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4888,
+      "sha256": "3447bcd01a909c8b"
+    },
+    {
+      "path": "codex/prompts/poc_ingestion.prompt.md",
+      "bytes": 697,
+      "sha256": "95d9d023c1126acc"
+    },
+    {
+      "path": "codex/prompts/poc_scaffold.prompt.md",
+      "bytes": 621,
+      "sha256": "cd9aa97b2bd0d604"
+    },
+    {
+      "path": "codex/tasks/01_scaffold.md",
+      "bytes": 362,
+      "sha256": "ad51632a5eccf123"
+    },
+    {
+      "path": "codex/tasks/02_ingestion.md",
+      "bytes": 508,
+      "sha256": "f433fe977b36421b"
+    },
+    {
+      "path": "codex/tasks/03_triage.md",
+      "bytes": 428,
+      "sha256": "9940c809bf0441a0"
+    },
+    {
+      "path": "codex/tasks/04_cni_analysis_schema.md",
+      "bytes": 381,
+      "sha256": "e27cefa0f00a48f9"
+    },
+    {
+      "path": "codex/tasks/05_openclaw_integration.md",
+      "bytes": 420,
+      "sha256": "2d37234a7db7c180"
+    },
+    {
+      "path": "codex/tasks/06_budget_and_guardrails.md",
+      "bytes": 434,
+      "sha256": "2273082b115993e4"
+    },
+    {
+      "path": "codex/user_config.example.toml",
+      "bytes": 678,
+      "sha256": "40a54844a385ccc6"
+    },
+    {
+      "path": "data/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c14"
+    },
+    {
+      "path": "docs/01_DEVELOPMENT_PLAN.md",
+      "bytes": 7843,
+      "sha256": "f94a2625dff990f4"
+    },
+    {
+      "path": "docs/02_ARCHITECTURE.md",
+      "bytes": 4335,
+      "sha256": "d5943c51138b0e16"
+    },
+    {
+      "path": "docs/03_CNI_METHOD_SPEC.md",
+      "bytes": 5931,
+      "sha256": "d1a9cf368e1b5606"
+    },
+    {
+      "path": "docs/04_BUDGET_AND_MODEL_ROUTING.md",
+      "bytes": 3612,
+      "sha256": "bc3c23a15cf9dae7"
+    },
+    {
+      "path": "docs/05_SECURITY_OPS.md",
+      "bytes": 2642,
+      "sha256": "e4347eee356bd11a"
+    },
+    {
+      "path": "docs/06_EVALS_AND_ACCEPTANCE.md",
+      "bytes": 1609,
+      "sha256": "bbf126f26b86131d"
+    },
+    {
+      "path": "docs/07_CODEX_CLI_WORKFLOW.md",
+      "bytes": 3064,
+      "sha256": "f1b7ab8d9773452d"
+    },
+    {
+      "path": "docs/08_CODEX_DEV_OPENCLAW_RUNTIME_BOUNDARY.md",
+      "bytes": 2414,
+      "sha256": "da578646e2c644a0"
+    },
+    {
+      "path": "docs/09_OPENCLAW_RUNTIME_HARNESS.md",
+      "bytes": 2114,
+      "sha256": "521992f1be58a6ad"
+    },
+    {
+      "path": "examples/sample_article.md",
+      "bytes": 188,
+      "sha256": "d6e3c531e8ad2473"
+    },
+    {
+      "path": "examples/sample_outputs/literature_analysis.json",
+      "bytes": 2749,
+      "sha256": "5396b1b4508117b1"
+    },
+    {
+      "path": "openclaw/OPENCLAW_SETUP.md",
+      "bytes": 1421,
+      "sha256": "ccf5ac8376ee2b71"
+    },
+    {
+      "path": "openclaw/cron/72h_brief.prompt.md",
+      "bytes": 883,
+      "sha256": "0925e275216920c9"
+    },
+    {
+      "path": "openclaw/harness/config/openclaw.runtime.openrouter-only.json5",
+      "bytes": 3688,
+      "sha256": "f20505110bf47f9d"
+    },
+    {
+      "path": "openclaw/harness/skills/cni-72h-brief/SKILL.md",
+      "bytes": 852,
+      "sha256": "0537f8e5054285ac"
+    },
+    {
+      "path": "openclaw/harness/skills/cni-constraint-critic/SKILL.md",
+      "bytes": 1028,
+      "sha256": "8eb4db3236b99454"
+    },
+    {
+      "path": "openclaw/harness/skills/cni-literature-analysis/SKILL.md",
+      "bytes": 1177,
+      "sha256": "e8a99825c85d96e6"
+    },
+    {
+      "path": "openclaw/harness/skills/cni-source-triage/SKILL.md",
+      "bytes": 1131,
+      "sha256": "bcda495428700440"
+    },
+    {
+      "path": "openclaw/harness/workspace/AGENTS.md",
+      "bytes": 2223,
+      "sha256": "55d553bf68dbfa5a"
+    },
+    {
+      "path": "openclaw/harness/workspace/BOOTSTRAP.md",
+      "bytes": 395,
+      "sha256": "220dfaeed75255f4"
+    },
+    {
+      "path": "openclaw/harness/workspace/HEARTBEAT.md",
+      "bytes": 323,
+      "sha256": "ed4c1c31d8476979"
+    },
+    {
+      "path": "openclaw/harness/workspace/IDENTITY.md",
+      "bytes": 294,
+      "sha256": "3c7211938aeadf45"
+    },
+    {
+      "path": "openclaw/harness/workspace/MEMORY.md",
+      "bytes": 1101,
+      "sha256": "8b8c9f7df37213fe"
+    },
+    {
+      "path": "openclaw/harness/workspace/SOUL.md",
+      "bytes": 1340,
+      "sha256": "18b975aa1a0e55f3"
+    },
+    {
+      "path": "openclaw/harness/workspace/TOOLS.md",
+      "bytes": 947,
+      "sha256": "c6eaf0212a1bd255"
+    },
+    {
+      "path": "openclaw/harness/workspace/USER.md",
+      "bytes": 528,
+      "sha256": "bc7ba917bd99f63e"
+    },
+    {
+      "path": "openclaw/harness/workspace/memory/2026-05-20.md",
+      "bytes": 390,
+      "sha256": "892374d182137c09"
+    },
+    {
+      "path": "openclaw/openclaw.experimental.json5",
+      "bytes": 2281,
+      "sha256": "e04636b54fdaf725"
+    },
+    {
+      "path": "openclaw/openclaw.production.json5",
+      "bytes": 223,
+      "sha256": "885b1d6e99c98956"
+    },
+    {
+      "path": "outputs/.gitkeep",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c14"
+    },
+    {
+      "path": "prompts/codex/00_bootstrap.md",
+      "bytes": 362,
+      "sha256": "1d994cd9296695e8"
+    },
+    {
+      "path": "prompts/codex/01_implement_poc.md",
+      "bytes": 553,
+      "sha256": "3ac9a40cf6084952"
+    },
+    {
+      "path": "prompts/system/brief_synthesizer.md",
+      "bytes": 799,
+      "sha256": "a0b04eea6acc8f95"
+    },
+    {
+      "path": "prompts/system/cni_analyzer.md",
+      "bytes": 1425,
+      "sha256": "f9b9e0bac12b5c96"
+    },
+    {
+      "path": "prompts/system/cni_critic.md",
+      "bytes": 979,
+      "sha256": "26e5e0ca76cd0b8e"
+    },
+    {
+      "path": "pyproject.toml",
+      "bytes": 470,
+      "sha256": "40df36a9d54dcee7"
+    },
+    {
+      "path": "schemas/brief.schema.json",
+      "bytes": 1608,
+      "sha256": "30d177d306f6da96"
+    },
+    {
+      "path": "schemas/literature_analysis.schema.json",
+      "bytes": 4704,
+      "sha256": "9518d5bab9ee665f"
+    },
+    {
+      "path": "schemas/source_item.schema.json",
+      "bytes": 1605,
+      "sha256": "9bde15460bde269c"
+    },
+    {
+      "path": "scripts/codex_poc_scaffold.sh",
+      "bytes": 175,
+      "sha256": "e61d61f220234f14"
+    },
+    {
+      "path": "scripts/install_openclaw_harness.sh",
+      "bytes": 1690,
+      "sha256": "5cf197b7f81a6874"
+    },
+    {
+      "path": "scripts/install_skills.sh",
+      "bytes": 484,
+      "sha256": "e936060a7bb272ef"
+    },
+    {
+      "path": "skills/cni-72h-brief/SKILL.md",
+      "bytes": 852,
+      "sha256": "0537f8e5054285ac"
+    },
+    {
+      "path": "skills/cni-constraint-critic/SKILL.md",
+      "bytes": 1028,
+      "sha256": "8eb4db3236b99454"
+    },
+    {
+      "path": "skills/cni-literature-analysis/SKILL.md",
+      "bytes": 1177,
+      "sha256": "e8a99825c85d96e6"
+    },
+    {
+      "path": "skills/cni-source-triage/SKILL.md",
+      "bytes": 1131,
+      "sha256": "bcda495428700440"
+    },
+    {
+      "path": "src/zyw_insight/__init__.py",
+      "bytes": 112,
+      "sha256": "854dc4671315c0fc"
+    },
+    {
+      "path": "src/zyw_insight/budget.py",
+      "bytes": 2348,
+      "sha256": "8d00ce8233d4a75a"
+    },
+    {
+      "path": "src/zyw_insight/cli.py",
+      "bytes": 6722,
+      "sha256": "ef4a05accda2d4bd"
+    },
+    {
+      "path": "src/zyw_insight/quality_gates.py",
+      "bytes": 3238,
+      "sha256": "a04d8e5fe3c12afa"
+    },
+    {
+      "path": "src/zyw_insight/runtime_guard.py",
+      "bytes": 1651,
+      "sha256": "3308911a071df867"
+    },
+    {
+      "path": "tests/test_budget.py",
+      "bytes": 852,
+      "sha256": "8a3e98f282fb6aea"
+    },
+    {
+      "path": "tests/test_quality_gates.py",
+      "bytes": 1720,
+      "sha256": "9d925706ce6a4b03"
+    },
+    {
+      "path": "tests/test_runtime_guard.py",
+      "bytes": 871,
+      "sha256": "769ca487322ef77e"
+    }
+  ]
+}

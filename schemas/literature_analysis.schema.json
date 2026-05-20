@@ -1,0 +1,235 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CNILiteratureAnalysis",
+  "type": "object",
+  "required": [
+    "analysis_id",
+    "source",
+    "one_sentence_conclusion",
+    "problem_background",
+    "core_idea",
+    "innovation_points",
+    "mechanism",
+    "constraints",
+    "constraint_dependency",
+    "degraded_process_counterfactual",
+    "network_impact_vector",
+    "evidence_quality",
+    "hidden_assumptions_and_risks",
+    "security_and_operations",
+    "reproducibility",
+    "insights",
+    "strategic_meaning",
+    "score",
+    "recommended_action",
+    "follow_up_experiments"
+  ],
+  "properties": {
+    "analysis_id": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object"
+    },
+    "one_sentence_conclusion": {
+      "type": "string"
+    },
+    "problem_background": {
+      "type": "string"
+    },
+    "core_idea": {
+      "type": "string"
+    },
+    "innovation_points": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "mechanism": {
+      "type": "object"
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "type",
+          "explicitly_stated",
+          "performance_impact",
+          "hardness",
+          "degradation_consequence"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "explicitly_stated": {
+            "type": "boolean"
+          },
+          "performance_impact": {
+            "type": "string"
+          },
+          "hardness": {
+            "type": "string",
+            "enum": [
+              "hard",
+              "semi-hard",
+              "soft",
+              "unknown"
+            ]
+          },
+          "degradation_consequence": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "constraint_dependency": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "degraded_process_counterfactual": {
+      "type": "object",
+      "required": [
+        "verdict",
+        "conditions",
+        "failure_modes",
+        "compensation_mechanisms"
+      ],
+      "properties": {
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "yes",
+            "no",
+            "conditional",
+            "unknown"
+          ]
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "failure_modes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "compensation_mechanisms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "network_impact_vector": {
+      "type": "object",
+      "required": [
+        "Latency",
+        "Jitter/IPDV",
+        "Bandwidth/Capacity",
+        "Reliability",
+        "Security",
+        "Operations",
+        "BER/Error",
+        "Scalability",
+        "Cost/Power"
+      ],
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "impact": {
+            "type": "string",
+            "enum": [
+              "++",
+              "+",
+              "0",
+              "-",
+              "--",
+              "?"
+            ]
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "risk": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "evidence_quality": {
+      "type": "object"
+    },
+    "comparison_to_existing": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "hidden_assumptions_and_risks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "security_and_operations": {
+      "type": "object"
+    },
+    "reproducibility": {
+      "type": "object"
+    },
+    "insights": {
+      "type": "object",
+      "required": [
+        "direct",
+        "counterfactual",
+        "strategic"
+      ]
+    },
+    "strategic_meaning": {
+      "type": "string"
+    },
+    "score": {
+      "type": "object",
+      "required": [
+        "total",
+        "dimensions"
+      ]
+    },
+    "recommended_action": {
+      "type": "string",
+      "enum": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "follow_up_experiments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "quality_gate": {
+      "type": "object"
+    },
+    "cost_estimate": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}
