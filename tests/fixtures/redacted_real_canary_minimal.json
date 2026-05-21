@@ -1,0 +1,118 @@
+{
+  "canary_run_id": "canary-redacted-fixture",
+  "created_at": "2026-05-21T14:28:40.986069+00:00",
+  "dry_run": false,
+  "real_call_requested": true,
+  "real_call_executed": true,
+  "manual_approval": {
+    "real_call_flag": true,
+    "allow_network_flag": true,
+    "confirm_charge_flag": true,
+    "max_cost_usd": 5.0,
+    "manual_override": false
+  },
+  "provider": "openrouter",
+  "internal_model_id": "openrouter/qwen/qwen3.5-397b-a17b",
+  "api_model_slug": "qwen/qwen3.5-397b-a17b",
+  "stage": "literature_analysis",
+  "request": {
+    "request_id": "req-redacted",
+    "source_id": "local-acf176c826f4ff23",
+    "budget_status": "ok",
+    "manual_required": false,
+    "payload": {
+      "model": "qwen/qwen3.5-397b-a17b",
+      "messages_sha256": "01f1be48c86ae70024bee7064a1f1843c5d191a12f43506c08267ea3001ef722",
+      "messages_redacted": true,
+      "max_tokens": 256,
+      "stream": false,
+      "metadata": {
+        "source_id": "local-acf176c826f4ff23",
+        "title": "SwiftDC: Tail-Aware RDMA Congestion Control for Datacenter Fabrics",
+        "hash": "d7bc2d546692fc5962c33d66d4d81257dcab45e18306e67405bc559afa6e9c88",
+        "stage": "literature_analysis",
+        "schema_version": "unknown"
+      }
+    }
+  },
+  "response": {
+    "response_id": "gen-redacted",
+    "status": "success",
+    "model": "qwen/qwen3.5-397b-a17b-20260216",
+    "id": "gen-redacted",
+    "choices": [
+      {
+        "index": 0,
+        "logprobs": null,
+        "finish_reason": "length",
+        "native_finish_reason": "length",
+        "message": {
+          "role": "assistant",
+          "content_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+          "content_length": 0,
+          "content_redacted": true,
+          "reasoning_sha256": "4c6a15d0f829b92c7fc493bdf1fdca43b02649af3a23c04335a7047d5762cc42",
+          "reasoning_length": 1200,
+          "reasoning_redacted": true,
+          "reasoning_details_sha256": "a2e1b45dbad2f6c177361fbb83251f524d87f4cc53463281f8644eda95ea2f0e",
+          "reasoning_details_length": 1333,
+          "reasoning_details_redacted": true,
+          "refusal": null
+        }
+      }
+    ],
+    "error": null
+  },
+  "usage": {
+    "estimated_input_tokens": 503,
+    "estimated_output_tokens": 256,
+    "actual_input_tokens": 253,
+    "actual_output_tokens": 1200,
+    "estimate_under_predicted": true,
+    "estimate_error_ratio": 4.6875
+  },
+  "cost": {
+    "estimated_cost_usd": 0.003364,
+    "actual_cost_usd": 0.0044465,
+    "max_cost_usd": 5.0,
+    "cost_estimate_source": "budget_router_estimate",
+    "actual_cost_source": "openrouter_usage",
+    "audit_cost_usd": 0.0044465
+  },
+  "ledger_event": {
+    "timestamp": "2026-05-21T14:28:40.986069+00:00",
+    "dry_run": false,
+    "real_call_executed": true,
+    "stage": "literature_analysis",
+    "model_id": "openrouter/qwen/qwen3.5-397b-a17b",
+    "api_model_slug": "qwen/qwen3.5-397b-a17b",
+    "source_id": "local-acf176c826f4ff23",
+    "estimated_input_tokens": 503,
+    "estimated_output_tokens": 256,
+    "actual_input_tokens": 253,
+    "actual_output_tokens": 1200,
+    "estimated_cost_usd": 0.003364,
+    "actual_cost_usd": 0.0044465,
+    "max_cost_usd": 5.0,
+    "budget_status": "ok",
+    "manual_required": false,
+    "request_id": "req-redacted",
+    "response_id": "gen-redacted",
+    "error_status": null
+  },
+  "runtime_boundary": {
+    "openrouter_only": true,
+    "codex_runtime_used": false,
+    "network_request_sent": true,
+    "api_key_logged": false,
+    "body_logged": false,
+    "messages_logged": false
+  },
+  "validation": {
+    "manual_flags_valid": true,
+    "schema_valid": true
+  },
+  "notes": [
+    "redacted real canary regression fixture"
+  ]
+}

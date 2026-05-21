@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ZYWDiscoveryRun",
+  "type": "object",
+  "required": [
+    "discovery_run_id",
+    "created_at",
+    "dry_run",
+    "network_used",
+    "real_metadata_discovery",
+    "providers_requested",
+    "providers_executed",
+    "query_profile",
+    "candidate_count",
+    "deduplicated_count",
+    "selected_for_triage_count",
+    "selected_for_deep_read_count",
+    "candidates",
+    "deduplication_report",
+    "watchlist",
+    "triage_preview",
+    "provider_errors",
+    "runtime_boundary",
+    "validation",
+    "notes"
+  ],
+  "properties": {
+    "dry_run": {"type": "boolean"},
+    "network_used": {"type": "boolean"},
+    "real_metadata_discovery": {"type": "boolean"},
+    "candidates": {"type": "array"},
+    "runtime_boundary": {"type": "object"}
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,37 @@
+{
+  // Template only. Metadata discovery network is allowed; model and delivery networks are not.
+  name: "zyw-source-discovery-real-metadata",
+  enabled: false,
+  mode: "metadata_discovery_only",
+  command: [
+    "python3",
+    "-m",
+    "zyw_insight.cli",
+    "discover-sources",
+    "--query-profile",
+    "datacenter_networking",
+    "--provider",
+    "arxiv",
+    "--provider",
+    "openalex",
+    "--provider",
+    "semantic_scholar",
+    "--provider",
+    "crossref",
+    "--provider",
+    "ietf",
+    "--max-candidates",
+    "20"
+  ],
+  environment: {
+    PYTHONPATH: "src"
+  },
+  runtime_boundary: {
+    discovery_network_allowed: true,
+    model_network_allowed: false,
+    provider_credentials_allowed: false,
+    pdf_retrieval_allowed: false,
+    fulltext_retrieval_allowed: false,
+    delivery_allowed: false
+  }
+}

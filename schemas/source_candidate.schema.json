@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ZYWSourceCandidate",
+  "type": "object",
+  "required": [
+    "candidate_id",
+    "discovered_at",
+    "source_provider",
+    "provider_record_id",
+    "title",
+    "abstract",
+    "authors",
+    "published_at",
+    "updated_at",
+    "venue",
+    "source_url",
+    "pdf_url",
+    "doi",
+    "arxiv_id",
+    "openalex_id",
+    "semantic_scholar_id",
+    "ietf_id",
+    "document_type",
+    "source_tier_hint",
+    "domain_hints",
+    "credibility_hints",
+    "business_relevance_hints",
+    "deep_read_priority_hint",
+    "keyword_matches",
+    "dedup_keys",
+    "body_is_untrusted",
+    "provenance",
+    "metadata"
+  ],
+  "properties": {
+    "source_provider": {"enum": ["arxiv", "semantic_scholar", "openalex", "crossref", "ietf", "manual_watchlist"]},
+    "document_type": {"enum": ["paper", "standard", "rfc", "internet_draft", "whitepaper", "tech_report", "blog", "news", "open_source_doc", "unknown"]},
+    "source_tier_hint": {"enum": ["A", "B", "C", "D", "unknown"]},
+    "deep_read_priority_hint": {"enum": ["High", "Medium", "Low", "unknown"]},
+    "body_is_untrusted": {"const": true}
+  },
+  "additionalProperties": true
+}

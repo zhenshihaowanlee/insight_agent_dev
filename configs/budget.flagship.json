@@ -1,0 +1,24 @@
+{
+  "policy_id": "budget-flagship-v1",
+  "name": "Flagship quality budget",
+  "environment": "flagship",
+  "monthly_budget_usd": 1000,
+  "soft_cap_usd": 1200,
+  "hard_cap_usd": 1500,
+  "daily_document_limit": 30,
+  "monthly_document_limit": 900,
+  "default_brief_interval_hours": 72,
+  "quality_priority": "high",
+  "stage_policies": {
+    "triage": {"preferred_model": "openrouter/low-cost-triage-placeholder", "fallback_model": "openrouter/low-cost-triage-placeholder", "max_input_tokens_per_item": 10000, "max_output_tokens_per_item": 1000, "reasoning_level": "low", "retry_limit": 1, "cache_eligible": true, "manual_only": false, "quality_floor": "basic"},
+    "literature_analysis": {"preferred_model": "openrouter/long-context-analysis-placeholder", "fallback_model": "openrouter/balanced-analysis-placeholder", "max_input_tokens_per_item": 192000, "max_output_tokens_per_item": 20000, "reasoning_level": "high", "retry_limit": 1, "cache_eligible": true, "manual_only": false, "quality_floor": "high"},
+    "constraint_critic": {"preferred_model": "openrouter/reasoning-critic-placeholder", "fallback_model": "openrouter/balanced-critic-placeholder", "max_input_tokens_per_item": 80000, "max_output_tokens_per_item": 12000, "reasoning_level": "high", "retry_limit": 1, "cache_eligible": true, "manual_only": false, "quality_floor": "high"},
+    "brief_synthesis": {"preferred_model": "openrouter/high-quality-brief-placeholder", "fallback_model": "openrouter/balanced-brief-placeholder", "max_input_tokens_per_item": 320000, "max_output_tokens_per_item": 24000, "reasoning_level": "high", "retry_limit": 1, "cache_eligible": false, "manual_only": false, "quality_floor": "high"},
+    "final_review": {"preferred_model": "openrouter/premium-final-review-placeholder", "fallback_model": "openrouter/high-quality-brief-placeholder", "max_input_tokens_per_item": 400000, "max_output_tokens_per_item": 32000, "reasoning_level": "high", "retry_limit": 0, "cache_eligible": false, "manual_only": true, "quality_floor": "premium"}
+  },
+  "priority_allocation": {"preserve_quality_for_source_tiers": ["A", "B"], "preserve_quality_for_deep_read_priority": ["High"], "reduce_volume_before_model_quality": true, "skip_low_priority_before_downgrading_high_priority": true},
+  "downgrade_rules": ["watch at 70 percent soft cap", "reduce low-value volume at 80 percent", "degrade or skip C/D Low priority at 90 percent", "stop nonessential work at 100 percent", "hard stop at hard cap"],
+  "alert_thresholds": [70, 80, 90, 100],
+  "delivery_policy": {"draft_only": true, "requires_human_approval": true},
+  "provider_policy": {"allowed_provider_prefixes": ["openrouter/"], "forbidden_provider_terms": ["codex", "coding-agent", "oauth", "@openai/codex"]}
+}

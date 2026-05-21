@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OpenRouterAdapterRun",
+  "type": "object",
+  "required": [
+    "run_id",
+    "created_at",
+    "dry_run",
+    "stage",
+    "source_id",
+    "request",
+    "response",
+    "ledger_event",
+    "runtime_boundary",
+    "validation",
+    "notes"
+  ],
+  "properties": {
+    "run_id": {"type": "string"},
+    "created_at": {"type": "string"},
+    "dry_run": {"type": "boolean", "const": true},
+    "stage": {"type": "string"},
+    "source_id": {"type": "string"},
+    "request": {"type": "object"},
+    "response": {"type": "object"},
+    "ledger_event": {"type": "object"},
+    "runtime_boundary": {"type": "object"},
+    "validation": {"type": "object"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,5 @@
+Breakthrough UltraFabric Product Marketing Whitepaper
+
+Our vendor platform is a best-in-class revolutionary networking solution for every AI cluster and datacenter. The product marketing team claims unmatched performance and industry-leading average latency improvements.
+
+This whitepaper has no baseline comparison, no experiment details, and no public testbed data. It does not provide p95 or p99 latency, queue behavior, reproducibility notes, or implementation constraints. Contact sales for deployment details.

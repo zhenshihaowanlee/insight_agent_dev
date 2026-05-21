@@ -1,0 +1,10 @@
+.zyw_insight/
+*.real.jsonl
+*canary_ledger*.jsonl
+*canary_last_output*.json
+.env
+.env.*
+!.env.example
+__pycache__/
+*.pyc
+.DS_Store

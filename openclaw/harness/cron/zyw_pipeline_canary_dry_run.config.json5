@@ -1,0 +1,36 @@
+{
+  // Template only. Do not install as an enabled cron job.
+  name: "zyw-pipeline-canary-dry-run",
+  enabled: false,
+  mode: "dry_run",
+  command: [
+    "python3",
+    "-m",
+    "zyw_insight.cli",
+    "pipeline-canary",
+    "examples/sample_inputs/sample_paper.md",
+    "--environment",
+    "quality_first",
+    "--spent-usd",
+    "50",
+    "--internal-model-id",
+    "openrouter/example/model-slug",
+    "--max-cost-usd",
+    "5"
+  ],
+  environment: {
+    PYTHONPATH: "src"
+  },
+  output: {
+    artifact_mode: "local_review_only",
+    requires_human_approval: true,
+    external_delivery_sent: false
+  },
+  runtime_boundary: {
+    dry_run_only: true,
+    real_model_execution_allowed: false,
+    provider_credentials_allowed: false,
+    external_delivery_allowed: false,
+    terminal_review_manual_only: true
+  }
+}

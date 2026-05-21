@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ZYWSmallPipelineCanary",
+  "type": "object",
+  "required": [
+    "pipeline_canary_id",
+    "created_at",
+    "dry_run",
+    "real_call_requested",
+    "real_call_executed",
+    "manual_approval",
+    "input",
+    "environment",
+    "quality_priority",
+    "stages",
+    "real_stage_canaries",
+    "artifacts",
+    "runtime_boundary",
+    "budget",
+    "validation",
+    "notes"
+  ],
+  "properties": {
+    "pipeline_canary_id": {"type": "string"},
+    "created_at": {"type": "string"},
+    "dry_run": {"type": "boolean"},
+    "real_call_requested": {"type": "boolean"},
+    "real_call_executed": {"type": "boolean"},
+    "manual_approval": {
+      "type": "object",
+      "required": ["real_call_flag", "allow_network_flag", "confirm_charge_flag", "max_cost_usd", "max_documents", "allowed_real_stages", "manual_override"]
+    },
+    "input": {
+      "type": "object",
+      "required": ["input_dir_or_file", "selected_documents", "skipped_documents", "max_documents"]
+    },
+    "environment": {"type": "string"},
+    "quality_priority": {"type": "string"},
+    "stages": {"type": "object"},
+    "real_stage_canaries": {"type": "array"},
+    "artifacts": {"type": "object"},
+    "runtime_boundary": {"type": "object"},
+    "budget": {"type": "object"},
+    "validation": {"type": "object"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

@@ -4,31 +4,72 @@
   "type": "object",
   "required": [
     "analysis_id",
-    "source",
+    "source_id",
+    "title",
+    "domain",
+    "source_tier",
+    "source_type",
+    "body_is_untrusted",
+    "risk_flags",
+    "triage_summary",
+    "basic_info",
     "one_sentence_conclusion",
     "problem_background",
     "core_idea",
-    "innovation_points",
+    "contributions",
     "mechanism",
-    "constraints",
-    "constraint_dependency",
+    "process_constraints",
+    "constraint_findings",
+    "constraint_dependency_analysis",
     "degraded_process_counterfactual",
     "network_impact_vector",
     "evidence_quality",
+    "comparison_with_existing_technology",
     "hidden_assumptions_and_risks",
-    "security_and_operations",
+    "security_and_operations_impact",
     "reproducibility",
-    "insights",
-    "strategic_meaning",
+    "technical_insights",
+    "strategic_significance",
     "score",
     "recommended_action",
-    "follow_up_experiments"
+    "follow_up_validation_experiments",
+    "conclusion_strength",
+    "quality_gate_results",
+    "guardrail_notes"
   ],
   "properties": {
     "analysis_id": {
       "type": "string"
     },
-    "source": {
+    "source_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "source_type": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string"
+    },
+    "source_tier": {
+      "type": "string"
+    },
+    "body_is_untrusted": {
+      "type": "boolean",
+      "const": true
+    },
+    "risk_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "triage_summary": {
+      "type": "object"
+    },
+    "basic_info": {
       "type": "object"
     },
     "one_sentence_conclusion": {
@@ -40,16 +81,16 @@
     "core_idea": {
       "type": "string"
     },
-    "innovation_points": {
+    "contributions": {
       "type": "array",
       "items": {
-        "type": "object"
+        "type": "string"
       }
     },
     "mechanism": {
       "type": "object"
     },
-    "constraints": {
+    "process_constraints": {
       "type": "array",
       "items": {
         "type": "object",
@@ -89,7 +130,13 @@
         }
       }
     },
-    "constraint_dependency": {
+    "constraint_findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "constraint_dependency_analysis": {
       "type": "array",
       "items": {
         "type": "object"
@@ -136,18 +183,23 @@
     "network_impact_vector": {
       "type": "object",
       "required": [
-        "Latency",
-        "Jitter/IPDV",
-        "Bandwidth/Capacity",
-        "Reliability",
-        "Security",
-        "Operations",
-        "BER/Error",
-        "Scalability",
-        "Cost/Power"
+        "latency",
+        "jitter_ipdv",
+        "bandwidth_capacity",
+        "reliability",
+        "security",
+        "operations",
+        "ber_error",
+        "scalability",
+        "cost_power"
       ],
       "additionalProperties": {
         "type": "object",
+        "required": [
+          "impact",
+          "evidence",
+          "risk"
+        ],
         "properties": {
           "impact": {
             "type": "string",
@@ -172,7 +224,7 @@
     "evidence_quality": {
       "type": "object"
     },
-    "comparison_to_existing": {
+    "comparison_with_existing_technology": {
       "type": "array",
       "items": {
         "type": "object"
@@ -184,28 +236,30 @@
         "type": "string"
       }
     },
-    "security_and_operations": {
+    "security_and_operations_impact": {
       "type": "object"
     },
     "reproducibility": {
       "type": "object"
     },
-    "insights": {
-      "type": "object",
-      "required": [
-        "direct",
-        "counterfactual",
-        "strategic"
-      ]
+    "technical_insights": {
+      "type": "object"
     },
-    "strategic_meaning": {
+    "strategic_significance": {
       "type": "string"
     },
     "score": {
       "type": "object",
       "required": [
-        "total",
-        "dimensions"
+        "problem_importance",
+        "core_innovation",
+        "evidence_strength",
+        "process_constraint_robustness",
+        "network_impact_net_value",
+        "deployability",
+        "strategic_relevance",
+        "total_score",
+        "score_explanation"
       ]
     },
     "recommended_action": {
@@ -218,17 +272,55 @@
         "D"
       ]
     },
-    "follow_up_experiments": {
+    "follow_up_validation_experiments": {
       "type": "array",
       "items": {
         "type": "string"
       }
     },
-    "quality_gate": {
+    "conclusion_strength": {
+      "type": "string",
+      "enum": [
+        "strong",
+        "moderate",
+        "weak"
+      ]
+    },
+    "quality_gate_results": {
       "type": "object"
     },
-    "cost_estimate": {
+    "guardrail_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source": {
       "type": "object"
+    },
+    "innovation_points": {
+      "type": "array"
+    },
+    "constraints": {
+      "type": "array"
+    },
+    "constraint_dependency": {
+      "type": "array"
+    },
+    "comparison_to_existing": {
+      "type": "array"
+    },
+    "security_and_operations": {
+      "type": "object"
+    },
+    "insights": {
+      "type": "object"
+    },
+    "strategic_meaning": {
+      "type": "string"
+    },
+    "follow_up_experiments": {
+      "type": "array"
     }
   },
   "additionalProperties": true

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CNIBudgetPolicy",
+  "type": "object",
+  "required": [
+    "policy_id",
+    "name",
+    "environment",
+    "monthly_budget_usd",
+    "soft_cap_usd",
+    "hard_cap_usd",
+    "daily_document_limit",
+    "monthly_document_limit",
+    "default_brief_interval_hours",
+    "quality_priority",
+    "stage_policies",
+    "priority_allocation",
+    "downgrade_rules",
+    "alert_thresholds",
+    "delivery_policy",
+    "provider_policy"
+  ],
+  "properties": {
+    "policy_id": {"type": "string"},
+    "name": {"type": "string"},
+    "environment": {"type": "string", "enum": ["poc", "production", "quality_first", "research", "flagship"]},
+    "monthly_budget_usd": {"type": "number"},
+    "soft_cap_usd": {"type": "number"},
+    "hard_cap_usd": {"type": "number"},
+    "daily_document_limit": {"type": "integer"},
+    "monthly_document_limit": {"type": "integer"},
+    "default_brief_interval_hours": {"type": "integer"},
+    "quality_priority": {"type": "string", "enum": ["high", "balanced", "cost_saving"]},
+    "stage_policies": {
+      "type": "object",
+      "required": ["triage", "literature_analysis", "constraint_critic", "brief_synthesis", "final_review"]
+    },
+    "priority_allocation": {
+      "type": "object",
+      "required": [
+        "preserve_quality_for_source_tiers",
+        "preserve_quality_for_deep_read_priority",
+        "reduce_volume_before_model_quality",
+        "skip_low_priority_before_downgrading_high_priority"
+      ]
+    },
+    "downgrade_rules": {"type": "array"},
+    "alert_thresholds": {"type": "array"},
+    "delivery_policy": {
+      "type": "object",
+      "required": ["draft_only", "requires_human_approval"]
+    },
+    "provider_policy": {
+      "type": "object",
+      "required": ["allowed_provider_prefixes", "forbidden_provider_terms"]
+    }
+  },
+  "additionalProperties": true
+}

@@ -3,65 +3,169 @@
   "title": "CNI72hBrief",
   "type": "object",
   "required": [
+    "schema_version",
     "brief_id",
+    "generated_at",
     "window",
+    "input_count",
+    "source_items",
+    "input_traceability",
     "executive_brief",
     "technology_signal_radar",
-    "contradictions",
+    "cross_document_conflicts",
     "process_constraint_trends",
     "network_metric_trends",
+    "evidence_quality_summary",
+    "insight_quality",
+    "decision_readiness",
     "recommended_actions",
-    "quality_report"
+    "action_rationale",
+    "follow_up_experiments",
+    "draft_delivery",
+    "budget_context",
+    "guardrail_notes"
   ],
   "properties": {
+    "schema_version": {
+      "type": "string"
+    },
     "brief_id": {
+      "type": "string"
+    },
+    "generated_at": {
       "type": "string"
     },
     "window": {
       "type": "object",
       "required": [
         "start",
-        "end"
+        "end",
+        "hours"
       ]
     },
-    "executive_brief": {
+    "input_count": {
+      "type": "integer"
+    },
+    "source_items": {
       "type": "array",
       "items": {
-        "type": "string"
+        "type": "object",
+        "required": [
+          "source_id",
+          "title",
+          "domain",
+          "source_tier",
+          "recommended_action",
+          "score",
+          "risk_flags",
+          "network_impact_vector",
+          "constraint_findings",
+          "evidence_quality"
+        ]
       }
     },
-    "most_actionable_technology": {
-      "type": "string"
+    "input_traceability": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_id",
+          "title",
+          "analysis_id",
+          "critic_id",
+          "source_tier",
+          "domain",
+          "recommended_action_after",
+          "score_after",
+          "included_in_top_conclusions",
+          "inclusion_reason"
+        ]
+      }
     },
-    "biggest_risk": {
-      "type": "string"
-    },
-    "recommended_decision": {
-      "type": "string"
+    "executive_brief": {
+      "type": "object",
+      "required": [
+        "top_conclusions",
+        "most_actionable_technologies",
+        "biggest_risks",
+        "recommended_decisions"
+      ]
     },
     "technology_signal_radar": {
       "type": "array",
       "items": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "direction",
+          "signal_strength",
+          "evidence_count",
+          "new_evidence",
+          "constraint_risks",
+          "recommended_action"
+        ]
       }
     },
-    "contradictions": {
+    "cross_document_conflicts": {
       "type": "array",
       "items": {
-        "type": "object"
+        "type": "object",
+        "required": [
+          "conflict_point",
+          "document_a_view",
+          "document_b_view",
+          "possible_explanation",
+          "validation_needed",
+          "severity",
+          "impact_on_recommendation",
+          "validation_priority"
+        ]
       }
     },
     "process_constraint_trends": {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
+      "type": "object",
+      "required": [
+        "most_frequent_constraints",
+        "dependency_direction",
+        "degraded_process_robustness_summary"
+      ]
     },
     "network_metric_trends": {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
+      "type": "object",
+      "required": [
+        "latency",
+        "jitter_ipdv",
+        "bandwidth_capacity",
+        "reliability",
+        "security",
+        "operations",
+        "ber_error",
+        "scalability",
+        "cost_power"
+      ]
+    },
+    "evidence_quality_summary": {
+      "type": "object"
+    },
+    "insight_quality": {
+      "type": "object",
+      "required": [
+        "overall_confidence",
+        "evidence_weighting_method",
+        "high_confidence_claims",
+        "low_confidence_claims",
+        "rejected_strong_claims",
+        "uncertainty_notes"
+      ]
+    },
+    "decision_readiness": {
+      "type": "object",
+      "required": [
+        "ready_for_poc",
+        "ready_for_management_brief",
+        "requires_human_review",
+        "blocking_unknowns",
+        "minimum_validation_before_action"
+      ]
     },
     "recommended_actions": {
       "type": "array",
@@ -69,13 +173,55 @@
         "type": "object"
       }
     },
-    "budget_report": {
-      "type": "object"
+    "action_rationale": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "action",
+          "affected_direction",
+          "evidence_basis",
+          "constraint_basis",
+          "risk_basis",
+          "expected_value",
+          "why_not_stronger_action"
+        ]
+      }
     },
-    "quality_report": {
-      "type": "object"
+    "follow_up_experiments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
     },
-    "human_review_checklist": {
+    "draft_delivery": {
+      "type": "object",
+      "required": [
+        "mode",
+        "requires_human_approval"
+      ],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "const": "draft_only"
+        },
+        "requires_human_approval": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "budget_context": {
+      "type": "object",
+      "required": [
+        "budget_mode",
+        "quality_priority",
+        "estimated_quality_tier",
+        "budget_limited",
+        "budget_limited_sections"
+      ]
+    },
+    "guardrail_notes": {
       "type": "array",
       "items": {
         "type": "string"

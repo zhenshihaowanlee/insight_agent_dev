@@ -1,0 +1,18 @@
+{
+  "enabled_by_default": false,
+  "default_dry_run": true,
+  "max_real_calls_per_run": 1,
+  "default_max_cost_usd": 3.0,
+  "quality_sample_max_cost_usd": 10.0,
+  "max_prompt_chars": 6000,
+  "max_output_tokens": 256,
+  "quality_sample_max_output_tokens": 1200,
+  "allow_full_body": false,
+  "require_manual_flags": true,
+  "require_env_api_key": true,
+  "allowed_provider": "openrouter",
+  "internal_model_prefix": "openrouter/",
+  "forbidden_provider_terms": ["codex", "coding-agent", "oauth", "@openai/codex"],
+  "ledger_redaction_required": true,
+  "draft_only": true
+}

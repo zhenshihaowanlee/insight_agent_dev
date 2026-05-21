@@ -1,0 +1,65 @@
+{
+  "enabled_by_default": true,
+  "default_dry_run": false,
+  "real_metadata_discovery_enabled": true,
+  "network_enabled_by_default": true,
+  "model_call_enabled_by_default": false,
+  "pdf_download_enabled": false,
+  "fulltext_fetch_enabled": false,
+  "paywall_bypass_enabled": false,
+  "delivery_enabled": false,
+  "provider_allowlist": ["arxiv", "openalex", "crossref", "semantic_scholar", "ietf"],
+  "provider_endpoints": {
+    "arxiv": "https://export.arxiv.org/api/query",
+    "openalex": "https://api.openalex.org/works",
+    "crossref": "https://api.crossref.org/works",
+    "semantic_scholar": "https://api.semanticscholar.org/graph/v1/paper/search",
+    "ietf": "https://datatracker.ietf.org/api/v1/doc/document/"
+  },
+  "timeout_seconds": 20,
+  "max_candidates_per_provider": 5,
+  "max_total_candidates": 20,
+  "max_selected_for_triage": 10,
+  "max_selected_for_deep_read": 5,
+  "freshness_window_days": 365,
+  "rate_limit": {
+    "min_interval_seconds_per_provider": 0.2,
+    "max_retries": 1,
+    "retry_backoff_seconds": 0.5
+  },
+  "user_agent": "zyw-insight-source-discovery/0.1 metadata-only",
+  "query_profiles": {
+    "datacenter_networking": "datacenter networking RDMA congestion control p99 latency",
+    "ai_cluster_networking": "AI cluster networking collective communication datacenter fabric",
+    "optical_interconnect": "optical interconnect datacenter fabric silicon photonics",
+    "rdma_congestion": "RDMA RoCE congestion control tail latency",
+    "programmable_data_plane": "P4 programmable data plane SmartNIC DPU",
+    "network_security_ops": "network security operations observability rollback reliability"
+  },
+  "domain_keywords": {
+    "datacenter networking": ["datacenter", "data center", "fabric", "leaf-spine"],
+    "optical interconnect": ["optical", "silicon photonics", "co-packaged optics", "cpo"],
+    "RDMA / RoCE": ["rdma", "roce", "infiniband"],
+    "congestion control": ["congestion control", "ecn", "dcqcn", "hpcc"],
+    "AI cluster networking": ["ai cluster", "gpu cluster", "collective", "training"],
+    "SmartNIC / DPU": ["smartnic", "dpu", "ipu", "offload"],
+    "P4 / programmable data plane": ["p4", "programmable data plane", "tofino"],
+    "network security": ["security", "isolation", "threat"],
+    "network operations": ["operations", "observability", "rollback", "sre"],
+    "network measurement": ["measurement", "telemetry", "monitoring"],
+    "silicon / SerDes / BER / FEC": ["serdes", "ber", "fec", "silicon"]
+  },
+  "venue_keywords": ["SIGCOMM", "NSDI", "IMC", "OSDI", "SOSP", "IETF", "RFC", "IEEE", "ETSI"],
+  "source_tier_rules": {
+    "A": ["sigcomm", "nsdi", "imc", "osdi", "sosp", "rfc", "ietf", "ieee", "etsi", "production"],
+    "B": ["technical report", "engineering blog", "github", "documentation", "microsoft", "google", "meta", "amazon"],
+    "C": ["arxiv", "whitepaper", "press release", "vendor"],
+    "D": ["news", "summary", "medium", "blogspam"]
+  },
+  "deduplication_policy": ["doi", "arxiv_id", "openalex_id", "semantic_scholar_id", "ietf_id", "title_hash"],
+  "body_is_untrusted": true,
+  "delivery_policy": {
+    "draft_only": true,
+    "requires_human_approval": true
+  }
+}

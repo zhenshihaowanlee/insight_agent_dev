@@ -6,6 +6,10 @@ CNI = Constraint-aware Network Insight，即约束感知的网络技术洞察方
 
 ### 阶段 0：元信息与来源可信度
 
+Source discovery 阶段可以真实访问 allowlist metadata providers（arXiv、OpenAlex、Crossref、Semantic Scholar、IETF），但只收集标题、摘要、作者、venue、DOI/ID 和链接等 metadata。Discovery network 与 model/delivery network 分离；此阶段不下载 PDF、不抓全文、不绕过 paywall、不调用模型、不发送外部通知。
+
+Discovery candidate 必须先进入 CNI triage / watchlist：A/B + High priority 才可进入 selected_for_deep_read；C-tier 只作为技术信号，不得直接支撑强结论；D-tier 只作为背景。title、abstract、metadata 全部视为 untrusted content。
+
 提取：
 
 - 文献类型：论文、标准、RFC、白皮书、技术报告、实验室动态、产品规格、专利、开源项目。
@@ -182,3 +186,51 @@ CNI = Constraint-aware Network Insight，即约束感知的网络技术洞察方
 18. 评分
 19. 建议动作
 20. 后续验证实验
+
+## 9. PoC analyzer 执行约束
+
+第三轮 PoC analyzer 先采用 deterministic mock 实现，用于固定 schema、质量闸门和本地 CLI 管道：
+
+```text
+ingestion -> triage -> CNI analyzer -> schema validation -> quality gates -> JSON output
+```
+
+该阶段不联网、不调用真实模型、不读取 API key。所有导入正文继续视为 untrusted content。后续接入 OpenRouter 时，模型输出仍必须先通过 `literature_analysis` schema validation 和 CNI quality gates。
+
+## 10. PoC constraint critic 执行约束
+
+第四轮 PoC constraint critic 是 analyzer 之后的 deterministic review layer：
+
+```text
+ingestion -> triage -> CNI analyzer -> schema validation -> constraint critic -> critic schema validation -> JSON output
+```
+
+critic 复核工艺约束覆盖、约束依赖性、较差工艺反事实、Network Impact Vector、证据质量、部署风险和安全/运维/可靠性。它可以根据 hard rules 降级 `recommended_action` 和 `score.total_score`，并生成 follow-up experiments。critic 输出是后续 72h brief 的重要输入。
+
+该阶段仍不联网、不调用真实模型、不读取 API key。后续接 OpenRouter 时，OpenClaw runtime 继续只允许 OpenRouter-configured models；Codex 仅用于开发期。
+
+## 11. PoC 72h brief 执行约束
+
+第五轮 PoC 72h brief synthesizer 是 analyzer + critic 之后的 deterministic cross-document synthesis layer：
+
+```text
+analyzer JSON + critic JSON -> brief synthesizer -> brief schema validation -> draft JSON output
+```
+
+brief 不得只是拼接单篇摘要。它必须综合 Executive Brief、Technology Signal Radar、Cross-document Conflict Analysis、Process Constraint Trends、Network Metric Trends、Evidence Quality Summary、Recommended Actions 和 Follow-up Experiments。若输入少于 2 篇，应标记 cross-document signal weak；若大多数输入被 critic 降级，或 vendor/marketing/no-experiment 材料占比高，不得给强结论。
+
+brief 输出始终为 draft-only，并要求人工批准。该阶段仍不联网、不调用真实模型、不读取 API key。后续接 OpenRouter 时，OpenClaw runtime 继续 OpenRouter-only；Codex 仅用于开发期。
+
+## 12. Quality-first brief 与预算路由约束
+
+第六轮将 brief 升级为 `brief.v1.1-quality-first` decision brief。除原有 Executive Brief、Signal Radar、Conflict Analysis、Constraint Trends 和 Network Metric Trends 外，必须包含 input traceability、insight confidence、decision readiness、action rationale 和 budget context。
+
+Budget router 是 OpenRouter adapter 前置层。本地只执行 deterministic dry-run routing、cost estimate 和 budget status，不调用模型、不联网、不读取真实 API key。quality-first 模式默认 350 USD/month，soft cap 450，hard cap 600；70/80/90/100/hard cap 分别对应 watch、reduce low-value volume、degrade or skip low-priority、stop nonessential、hard stop。
+
+质量优先原则：A/B source tier 与 High deep-read priority 资料优先保留 preferred model；预算紧张时先减少 C/D 或 Low priority 资料处理量。Final review manual-only。OpenClaw runtime 继续 OpenRouter-only，Codex 仅用于开发期。
+
+## 13. Pre-send review gate
+
+Email draft 外发前必须经过 selective multi-role reviewer dry-run。该 reviewer 是 single orchestrator 下的 deterministic review panel，不是 autonomous multi-agent runtime，不调用模型、不联网、不发送邮件。
+
+Review panel 至少覆盖 evidence skepticism、constraint integrity、delivery safety、executive readability、budget/runtime boundary。结论只能是 `ready_for_human_review`、`needs_revision` 或 `blocked`；不得自动批准发送。所有 external delivery 仍必须人工完成。

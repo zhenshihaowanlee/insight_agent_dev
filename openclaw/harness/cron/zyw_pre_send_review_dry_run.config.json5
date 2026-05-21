@@ -1,0 +1,29 @@
+{
+  // Template only. Enable only after local runtime-guard passes.
+  name: "zyw-pre-send-review-dry-run",
+  enabled: false,
+  mode: "dry_run",
+  command: [
+    "python3",
+    "-m",
+    "zyw_insight.cli",
+    "pre-send-review",
+    ".zyw_insight/email_drafts/<draft-id>-draft"
+  ],
+  environment: {
+    PYTHONPATH: "src"
+  },
+  output: {
+    artifact_mode: "review_only",
+    requires_human_approval: true,
+    external_delivery_sent: false
+  },
+  runtime_boundary: {
+    local_artifact_only: true,
+    model_actions_allowed: false,
+    network_actions_allowed: false,
+    provider_credentials_allowed: false,
+    external_delivery_allowed: false,
+    auto_approval_allowed: false
+  }
+}

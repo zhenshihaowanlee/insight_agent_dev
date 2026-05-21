@@ -17,6 +17,7 @@
       workspace: "~/.openclaw/workspace/zyw-insight",
       sandbox: { mode: "non-main", scope: "agent" },
       skills: [
+        "cni-source-discovery",
         "cni-source-triage",
         "cni-literature-analysis",
         "cni-constraint-critic",
@@ -36,7 +37,7 @@
         name: "Source Scout",
         workspace: "~/.openclaw/workspace/zyw-insight",
         model: { primary: "openrouter/<verified-low-cost-model-id>" },
-        skills: ["cni-source-triage"],
+        skills: ["cni-source-discovery", "cni-source-triage"],
       },
       {
         id: "cni-analyzer",
@@ -68,6 +69,20 @@
         skills: [],
       },
     ],
+  },
+
+  sourceDiscovery: {
+    realMetadataDiscoveryEnabled: true,
+    discoveryNetworkAllowed: true,
+    modelNetworkAllowedByDiscovery: false,
+    deliveryNetworkAllowedByDiscovery: false,
+    pdfDownloadEnabled: false,
+    fulltextFetchEnabled: false,
+    paywallBypassEnabled: false,
+    providerAllowlist: ["arxiv", "openalex", "crossref", "semantic_scholar", "ietf"],
+    maxCandidatesPerRun: 20,
+    selectedForDeepReadLimit: 5,
+    defaultQueryProfile: "datacenter_networking",
   },
 
   skills: {

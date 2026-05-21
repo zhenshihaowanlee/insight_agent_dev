@@ -60,8 +60,8 @@
 交付：
 
 - `source_item` schema。
-- URL/PDF/Markdown 输入适配器。
-- 来源等级 A/B/C/D 初筛。
+- 本地 Markdown/TXT 输入适配器；PDF 先保留接口和 TODO，不引入 OCR 或大型依赖。
+- deterministic rule-based 来源等级 A/B/C/D 初筛，不调用模型、不联网。
 - 去重逻辑：URL、标题、hash。
 
 验收：对 10 条样例资料输出筛选结果，并正确标注 High/Medium/Low 深读优先级。
@@ -72,6 +72,8 @@
 
 - `literature_analysis` schema。
 - `cni-literature-analysis` OpenClaw skill。
+- 本地 deterministic mock analyzer，先建立稳定 20 段 CNI JSON 结构，不联网、不调用模型。
+- schema validation 作为 analyzer 输出前的硬约束。
 - prompts：快速分类、深度分析、约束分析、网络指标矩阵、评分。
 - 输出包括 20 个最终总结字段。
 
@@ -81,8 +83,9 @@
 
 交付：
 
+- deterministic constraint critic，作为 analyzer 后的本地复核层，不联网、不调用模型。
 - critic prompt。
-- 规则质量闸门。
+- 规则质量闸门；critic 可按 hard rules 降级 recommended action 和 score。
 - token/cost 估算模块。
 - 模型路由配置。
 
@@ -94,7 +97,10 @@
 
 - `brief` schema。
 - `cni-72h-brief` OpenClaw skill。
-- 简报包含 Executive Brief、技术信号雷达、跨文献矛盾分析、工艺约束趋势、网络指标趋势、建议动作。
+- deterministic 72h brief synthesizer，读取 analyzer + critic JSON，不联网、不调用模型。
+- 简报包含 Executive Brief、技术信号雷达、跨文献矛盾分析、工艺约束趋势、网络指标趋势、证据质量总结、建议动作和 follow-up experiments。
+- 简报不是单篇摘要拼接；当大多数输入被 critic 降级或 vendor/marketing/no-experiment 比例高时，不给强结论。
+- 输出保持 draft-only，后续才接 OpenRouter；OpenClaw runtime 继续 OpenRouter-only，Codex 仅用于开发期。
 
 验收：用 5–15 篇样例分析生成一份可人工审核的简报草稿。
 
@@ -108,6 +114,43 @@
 - 运行日志和失败重试策略。
 
 验收：OpenClaw 能按需触发分析和简报；任何自动发送前必须人工确认。
+
+#### M6：Brief schema hardening 与 quality-first budget router
+
+交付：
+
+- `brief.v1.1-quality-first` 决策级 brief schema，新增 traceability、confidence、decision_readiness、action_rationale 和 budget_context。
+- `budget_policy` schema 与 `configs/budget.*.json`，覆盖 PoC、production、quality_first、research、flagship。
+- 本地 deterministic budget router、cost guard、budget status 和 JSONL dry-run ledger。
+- quality-first production 默认 350 USD/month，软上限 450，硬上限 600；70/80/90/100/hard cap 分别 watch / reduce volume / degrade low-priority / stop / hard stop。
+- final review manual-only；brief 和外发仍 draft-only；后续才接 OpenRouter adapter。
+
+验收：CLI 可输出预算策略、成本估算、模型路由 dry-run 和 quality-first brief；runtime guard 覆盖 budget config，仍保持 OpenRouter-only。
+
+#### M7：OpenRouter adapter dry-run contract
+
+交付：
+
+- OpenRouter adapter dry-run，不联网、不读取 API key、不发真实请求。
+- `model_request` / `model_response` / `adapter_run` schema，固定后续真实调用前的 contract。
+- adapter 接入 quality-first budget router，记录模型路由、token estimate、cost estimate、budget status 和 runtime boundary。
+- redacted ledger 只记录 source_id、stage、model_id、成本估算和状态，不记录正文、messages 全文、API key、token、secret、authorization 或 env。
+- 后续真实 OpenRouter canary 必须人工批准；final review 继续 manual-only；外部交付继续 draft-only。
+
+验收：CLI `adapter-dry-run` 可输出 schema-valid JSON，可选写入 redacted ledger；runtime guard 验证 adapter 仍是 dry-run only。
+
+#### M8：Manual OpenRouter canary harness
+
+交付：
+
+- 人工批准的单次 OpenRouter canary harness，默认 dry-run。
+- `openrouter_canary` schema 与 `configs/openrouter_canary.json`，固定真实调用前的手动审批、成本上限、redaction 和 runtime boundary。
+- CLI `openrouter-canary`，真实调用必须显式传入 `--real-call`、`--allow-network`、`--confirm-openrouter-charge`、`--max-cost-usd` 和 verified `openrouter/<slug>`。
+- API payload 使用去掉 `openrouter/` 前缀后的 model slug；内部仍用 `openrouter/<slug>` 记录 OpenRouter-only routing。
+- canary ledger redacted，不记录正文、messages 全文、API key、token、secret、authorization 或 env。
+- final review 继续 manual-only；不允许 cron 自动触发 real canary；外部交付继续 draft-only。
+
+验收：dry-run canary CLI 与 ledger 通过；runtime guard 允许 gated canary 但继续禁止 adapter 变成真实调用。
 
 ---
 
@@ -161,6 +204,8 @@
 | 72h 洞察简报 | 技术路线判断、简报生成 | GPT-5.4 或同级综合模型 |
 | 重大终审 | 关键文献或管理层简报 | GPT-5.5 / GPT-5.5 Pro，手动触发 |
 
+PoC 阶段的 `model_router` 只返回 `openrouter/...` placeholder 和接口结构，不读取 API key、不发起网络请求。真实模型 ID 必须部署前由人工确认。
+
 ### 2.5 正式版质量指标
 
 | 指标 | 目标 |
@@ -209,6 +254,13 @@
 - 配置 cron，但输出 draft。
 - 每 72h 人工审核后发送。
 - 统计 token/cost/质量问题。
+- 第九轮新增 OpenClaw cron dry-run pipeline：cron 只触发本地 `run-72h-dry-run`，生成 draft-only 72h JSON/Markdown artifacts，并经过 budget router、adapter dry-run、runtime guard 和 redacted ledger。
+- cron dry-run 不触发真实 OpenRouter call，不触发 real canary，不读取 provider key，不联网，不发送邮件或外部通知。
+- 第十一轮新增 email draft workflow：只把 `brief.md` / `brief.json` 转成本地 `.eml`、Markdown preview、manifest 和 human approval checklist，不发送邮件，不使用 SMTP/sendmail/webhook，默认 approval decision 为 pending。
+- 第十二轮新增 selective multi-role reviewer dry-run：在 email draft 后生成本地 pre-send review report，检查 evidence、constraint、delivery safety、readability、budget/runtime boundary。它不是 autonomous multi-agent runtime，不调用模型、不联网、不发送，结果最多 `ready_for_human_review`。
+- 第十四轮固化 manual real OpenRouter canary 回归：单次真实 canary 已可用于人工验证，但 response content/reasoning/messages/source body 必须脱敏，usage/cost 进入审计，actual cost 缺失时使用 estimated fallback。真实 canary ledger 和 output 不提交到 git；下一步才考虑小规模真实 pipeline canary。
+- 第十五轮新增 small pipeline canary harness：默认 dry-run，真实调用必须人工触发，最多 1–2 篇资料，默认只允许 `literature_analysis` 真实 stage。`brief_synthesis`、`final_review` 和 cron 自动真实调用均禁止；deterministic pipeline 仍是主产物，real stage output 只作为 redacted validation artifact。
+- 第十六轮新增 real source discovery：agent 不只分析用户手动输入，也可以通过 metadata-only providers 自动发现候选论文/标准/技术资料。Discovery network 与 model/delivery network 分离；候选必须先进入 CNI triage，A/B + High 才进入深读候选，C 只作 signal，D 只作 background；不下载 PDF、不抓全文、不绕过 paywall、不自动调用 OpenRouter。
 
 ### 第 4 阶段：正式运行
 

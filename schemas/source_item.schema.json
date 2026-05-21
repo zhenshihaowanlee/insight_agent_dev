@@ -33,6 +33,9 @@
     "source_type": {
       "type": "string",
       "enum": [
+        "markdown",
+        "text",
+        "pdf",
         "paper",
         "standard",
         "rfc",
@@ -88,6 +91,28 @@
         "string",
         "null"
       ]
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "uri": {
+      "type": "string"
+    },
+    "body": {
+      "type": "string"
+    },
+    "body_is_untrusted": {
+      "type": "boolean",
+      "const": true
+    },
+    "content_hash": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
     },
     "rationale": {
       "type": "string"

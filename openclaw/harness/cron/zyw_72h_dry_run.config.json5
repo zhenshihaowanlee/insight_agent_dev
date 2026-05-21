@@ -1,0 +1,37 @@
+{
+  // Template only. Enable in OpenClaw only after local runtime-guard passes.
+  name: "zyw-72h-cni-dry-run",
+  enabled: false,
+  mode: "dry_run",
+  schedule: "0 */72 * * *",
+  command: [
+    "python3",
+    "-m",
+    "zyw_insight.cli",
+    "run-72h-dry-run",
+    "examples/sample_inputs",
+    "--environment",
+    "quality_first",
+    "--spent-usd",
+    "0",
+    "--window-hours",
+    "72",
+    "--trigger",
+    "openclaw_cron_dry_run"
+  ],
+  environment: {
+    PYTHONPATH: "src"
+  },
+  output: {
+    artifact_mode: "draft_only",
+    requires_human_approval: true,
+    external_delivery_sent: false
+  },
+  runtime_boundary: {
+    dry_run_only: true,
+    real_model_execution_allowed: false,
+    provider_credentials_allowed: false,
+    external_delivery_allowed: false,
+    final_review_manual_only: true
+  }
+}

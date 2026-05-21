@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CNI72hDryRunPipelineRun",
+  "type": "object",
+  "required": [
+    "run_id",
+    "created_at",
+    "dry_run",
+    "trigger",
+    "input",
+    "environment",
+    "quality_priority",
+    "budget_context",
+    "stages",
+    "artifacts",
+    "draft_delivery",
+    "runtime_boundary",
+    "guardrail_results",
+    "validation",
+    "notes"
+  ],
+  "properties": {
+    "run_id": {"type": "string"},
+    "created_at": {"type": "string"},
+    "dry_run": {"type": "boolean", "const": true},
+    "trigger": {"type": "string", "enum": ["manual", "openclaw_cron_dry_run"]},
+    "input": {"type": "object"},
+    "environment": {"type": "string"},
+    "quality_priority": {"type": "string"},
+    "budget_context": {"type": "object"},
+    "stages": {"type": "object"},
+    "artifacts": {"type": "object"},
+    "draft_delivery": {"type": "object"},
+    "runtime_boundary": {"type": "object"},
+    "guardrail_results": {"type": "array"},
+    "validation": {"type": "object"},
+    "notes": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

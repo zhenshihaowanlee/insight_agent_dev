@@ -1,0 +1,212 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CNIConstraintCritic",
+  "type": "object",
+  "required": [
+    "critic_id",
+    "source_id",
+    "title",
+    "domain",
+    "source_tier",
+    "reviewed_at",
+    "input_analysis_hash",
+    "overall_assessment",
+    "confidence_adjustment",
+    "recommended_action_before",
+    "recommended_action_after",
+    "recommended_action",
+    "score_before",
+    "score_after",
+    "score",
+    "risk_flags",
+    "network_impact_vector",
+    "downgrade_reasons",
+    "constraint_findings",
+    "evidence_quality",
+    "counterfactual_findings",
+    "network_impact_findings",
+    "evidence_quality_findings",
+    "deployment_risk_findings",
+    "security_ops_findings",
+    "hard_rule_violations",
+    "suggested_follow_up_experiments",
+    "final_critic_notes"
+  ],
+  "properties": {
+    "critic_id": {
+      "type": "string"
+    },
+    "source_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "domain": {
+      "type": "string"
+    },
+    "source_tier": {
+      "type": "string"
+    },
+    "reviewed_at": {
+      "type": "string"
+    },
+    "input_analysis_hash": {
+      "type": "string"
+    },
+    "overall_assessment": {
+      "type": "string"
+    },
+    "confidence_adjustment": {
+      "type": "string",
+      "enum": [
+        "upgrade",
+        "keep",
+        "downgrade",
+        "severe_downgrade"
+      ]
+    },
+    "recommended_action_before": {
+      "type": "string"
+    },
+    "recommended_action_after": {
+      "type": "string",
+      "enum": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "recommended_action": {
+      "type": "string",
+      "enum": [
+        "S",
+        "A",
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "score_before": {
+      "type": "object"
+    },
+    "score_after": {
+      "type": "object",
+      "required": [
+        "total_score",
+        "score_explanation"
+      ]
+    },
+    "score": {
+      "type": "object"
+    },
+    "risk_flags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "network_impact_vector": {
+      "type": "object"
+    },
+    "downgrade_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "constraint_findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "counterfactual_findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "network_impact_findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidence_quality_findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidence_quality": {
+      "type": "object"
+    },
+    "deployment_risk_findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "security_ops_findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "hard_rule_violations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "rule_id",
+          "severity",
+          "message",
+          "affected_sections",
+          "suggested_fix"
+        ],
+        "properties": {
+          "rule_id": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "info",
+              "warning",
+              "major",
+              "critical"
+            ]
+          },
+          "message": {
+            "type": "string"
+          },
+          "affected_sections": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "suggested_fix": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "suggested_follow_up_experiments": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "final_critic_notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": true
+}

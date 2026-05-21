@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ZYWEmailHumanApproval",
+  "type": "object",
+  "required": [
+    "approval_id",
+    "created_at",
+    "source_email_draft_id",
+    "approval_required",
+    "approved",
+    "reviewer",
+    "checklist",
+    "approval_decision",
+    "comments"
+  ],
+  "properties": {
+    "approval_id": {"type": "string"},
+    "created_at": {"type": "string"},
+    "source_email_draft_id": {"type": "string"},
+    "approval_required": {"type": "boolean", "const": true},
+    "approved": {"type": "boolean", "const": false},
+    "reviewer": {"type": ["string", "null"]},
+    "checklist": {"type": "object"},
+    "approval_decision": {"type": "string", "enum": ["pending", "approved_for_manual_send", "rejected", "needs_revision"]},
+    "comments": {"type": "string"}
+  },
+  "additionalProperties": true
+}
