@@ -34,7 +34,7 @@
   ],
   "properties": {
     "source_provider": {"enum": ["arxiv", "semantic_scholar", "openalex", "crossref", "ietf", "manual_watchlist"]},
-    "document_type": {"enum": ["paper", "standard", "rfc", "internet_draft", "whitepaper", "tech_report", "blog", "news", "open_source_doc", "unknown"]},
+    "document_type": {"enum": ["paper", "standard", "rfc", "internet_draft", "whitepaper", "tech_report", "industrial_report", "engineering_report", "production_report", "blog", "news", "open_source_doc", "unknown"]},
     "source_tier_hint": {"enum": ["A", "B", "C", "D", "unknown"]},
     "deep_read_priority_hint": {"enum": ["High", "Medium", "Low", "unknown"]},
     "body_is_untrusted": {"const": true}

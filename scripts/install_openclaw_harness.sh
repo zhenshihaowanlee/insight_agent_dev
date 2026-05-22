@@ -11,6 +11,7 @@ WORKSPACE_SRC="$ROOT_DIR/openclaw/harness/workspace"
 SKILLS_SRC="$ROOT_DIR/openclaw/harness/skills"
 CRON_SRC="$ROOT_DIR/openclaw/harness/cron"
 CONFIG_SRC="$ROOT_DIR/openclaw/harness/config/openclaw.runtime.openrouter-only.json5"
+CONFIG_AUX_SRC="$ROOT_DIR/openclaw/harness/config"
 
 OPENCLAW_DIR="${OPENCLAW_DIR:-$HOME/.openclaw}"
 WORKSPACE_DST="${OPENCLAW_WORKSPACE_DST:-$OPENCLAW_DIR/workspace/zyw-insight}"
@@ -33,6 +34,7 @@ printf 'Target skills:    %s\n' "$SKILLS_DST"
 printf 'Source cron:      %s\n' "$CRON_SRC"
 printf 'Target cron:      %s\n' "$CRON_DST"
 printf 'Source config:    %s\n' "$CONFIG_SRC"
+printf 'Source config dir:%s\n' "$CONFIG_AUX_SRC"
 printf 'Target config:    %s\n' "$CONFIG_DST"
 
 if [[ "$DRY_RUN" != "1" ]]; then
@@ -49,6 +51,8 @@ run "rsync -a --delete '$WORKSPACE_SRC/' '$WORKSPACE_DST/'"
 run "rsync -a '$SKILLS_SRC/' '$SKILLS_DST/'"
 run "rsync -a '$CRON_SRC/' '$CRON_DST/'"
 run "cp '$CONFIG_SRC' '$CONFIG_DST'"
+run "mkdir -p '$OPENCLAW_DIR/config'"
+run "rsync -a '$CONFIG_AUX_SRC/' '$OPENCLAW_DIR/config/'"
 
 printf '\nNext steps:\n'
 printf '1. Fill explicit OpenRouter model IDs in %s\n' "$CONFIG_DST"

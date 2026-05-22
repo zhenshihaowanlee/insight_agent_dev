@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ZYWFulltextArtifact",
+  "type": "object",
+  "required": [
+    "artifact_id",
+    "candidate_id",
+    "pdf_path",
+    "extracted_text_path",
+    "extracted_text_sha256",
+    "extracted_char_count",
+    "page_count",
+    "section_hints",
+    "source_url",
+    "pdf_url",
+    "open_access",
+    "paywall_bypassed",
+    "body_is_untrusted",
+    "runtime_boundary"
+  ],
+  "properties": {
+    "artifact_id": {"type": "string"},
+    "candidate_id": {"type": "string"},
+    "pdf_path": {"type": ["string", "null"]},
+    "extracted_text_path": {"type": ["string", "null"]},
+    "extracted_text_sha256": {"type": ["string", "null"]},
+    "extracted_char_count": {"type": "integer"},
+    "page_count": {"type": "integer"},
+    "section_hints": {"type": "object"},
+    "source_url": {"type": ["string", "null"]},
+    "pdf_url": {"type": ["string", "null"]},
+    "open_access": {"const": true},
+    "paywall_bypassed": {"const": false},
+    "body_is_untrusted": {"const": true},
+    "runtime_boundary": {"type": "object"}
+  }
+}

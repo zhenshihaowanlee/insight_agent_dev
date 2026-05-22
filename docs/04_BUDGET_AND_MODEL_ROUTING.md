@@ -134,6 +134,8 @@ Canary ledger 必须 redacted：不记录正文、messages 全文、API key、to
 
 第九轮引入 OpenClaw cron dry-run integration。cron 当前只能触发本地 `run-72h-dry-run` pipeline：ingestion、triage、deterministic analyzer、constraint critic、quality-first brief、budget router、adapter dry-run 和 redacted ledger。
 
+Discovery-to-pipeline dry-run 不消耗 OpenRouter budget：real metadata discovery 只访问 approved metadata providers，随后运行 deterministic local 72h pipeline 和 adapter dry-run。第一轮 OpenClaw experiment 不允许 real OpenRouter pipeline；未来 real-call 仍必须走人工批准的 bounded canary 命令、stage allowlist、成本上限和 redacted ledger。
+
 cron 生成 draft-only 72h brief artifacts，包含 `brief.json`、`brief.md`、adapter dry-run JSON、run manifest 和 redacted ledger。`brief.md` 必须人工审核后才允许外发。
 
 cron dry-run 不得执行真实 OpenRouter call，不得触发 real canary，不得读取 provider key，不得联网，不得发送邮件/Webhook。Final review 继续 manual-only，Codex 只用于开发期，OpenClaw runtime 继续 OpenRouter-only。

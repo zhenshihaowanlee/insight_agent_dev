@@ -1,0 +1,52 @@
+{
+  // Template only. Disabled by default; run manually for the first experiment.
+  name: "zyw-discovery-72h-dry-run",
+  enabled: false,
+  mode: "metadata_discovery_to_deterministic_pipeline_dry_run",
+  command: [
+    "python3",
+    "-m",
+    "zyw_insight.cli",
+    "run-discovery-72h-dry-run",
+    "--query-profile",
+    "datacenter_networking",
+    "--provider",
+    "arxiv",
+    "--provider",
+    "openalex",
+    "--provider",
+    "crossref",
+    "--provider",
+    "semantic_scholar",
+    "--provider",
+    "ietf",
+    "--max-candidates",
+    "20",
+    "--max-selected",
+    "5",
+    "--environment",
+    "quality_first",
+    "--spent-usd",
+    "50",
+    "--window-hours",
+    "72"
+  ],
+  environment: {
+    PYTHONPATH: "src"
+  },
+  output: {
+    artifact_mode: "draft_only",
+    selected_candidate_stubs: "metadata_only_untrusted",
+    external_delivery_sent: false,
+    requires_human_approval: true
+  },
+  runtime_boundary: {
+    discovery_network_allowed: true,
+    deterministic_pipeline_only: true,
+    model_network_allowed: false,
+    provider_credentials_allowed: false,
+    pdf_retrieval_allowed: false,
+    fulltext_retrieval_allowed: false,
+    delivery_allowed: false
+  }
+}

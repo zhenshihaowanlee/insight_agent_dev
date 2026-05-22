@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ZYWFulltextPromptAudit",
+  "type": "object",
+  "required": [
+    "extracted_text_sha256",
+    "extracted_char_count",
+    "selected_text_sha256",
+    "included_char_count",
+    "estimated_input_tokens",
+    "rough_estimated_input_tokens",
+    "conservative_estimated_input_tokens",
+    "min_input_tokens_required",
+    "target_input_tokens",
+    "max_input_tokens_hard",
+    "max_output_tokens_hard",
+    "max_total_tokens_hard",
+    "prompt_includes_fulltext_excerpt",
+    "one_shot_fulltext_attempt",
+    "full_text_not_really_sent_planned",
+    "expected_actual_input_safe",
+    "selection_strategy",
+    "omitted_char_count",
+    "section_coverage"
+  ],
+  "properties": {
+    "prompt_includes_fulltext_excerpt": {"type": "boolean", "const": true},
+    "one_shot_fulltext_attempt": {"type": "boolean", "const": true},
+    "full_text_not_really_sent_planned": {"type": "boolean"},
+    "expected_actual_input_safe": {"type": "boolean"}
+  },
+  "additionalProperties": true
+}

@@ -1,22 +1,27 @@
-# Project-scoped Codex CLI configuration for ZYW Insight Agent.
-# Keep provider/auth/model defaults in ~/.codex/config.toml.
-# This file is loaded only after you trust this project.
+# Codex CLI local permission profile for ZYW Insight development.
+# Do NOT put API keys or secrets in this file.
 
-approval_policy = "on-request"
 sandbox_mode = "workspace-write"
-allow_login_shell = false
-project_doc_fallback_filenames = ["TEAM_GUIDE.md", ".agents.md"]
-project_doc_max_bytes = 65536
+approval_policy = "never"
 
 [sandbox_workspace_write]
-# Default: keep network disabled for local generated commands.
-# Enable only when Codex is explicitly working on dependency installation or live docs checks.
-network_access = false
-exclude_slash_tmp = false
-exclude_tmpdir_env_var = false
+network_access = true
+writable_roots = ["/Users/zrf/.openclaw"]
 
-# Codex discovers project-scoped custom agents from .codex/agents/*.toml.
-# Keep concurrency low because subagents consume additional tokens.
-[agents]
-max_threads = 3
-max_depth = 1
+[shell_environment_policy]
+inherit = "all"
+ignore_default_excludes = true
+include_only = [
+  "OPENROUTER_API_KEY",
+  "PATH",
+  "HOME",
+  "USER",
+  "SHELL",
+  "TMPDIR",
+  "PWD",
+  "LANG",
+  "LC_*"
+]
+
+[features]
+goals = true

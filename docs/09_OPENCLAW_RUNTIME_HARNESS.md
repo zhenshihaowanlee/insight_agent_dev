@@ -116,3 +116,8 @@ bash scripts/install_openclaw_harness.sh
 ```
 
 正式上线前，请用 OpenClaw 自身 schema/doctor 校验真实配置。
+## Discovery-To-Pipeline Dry-Run
+
+OpenClaw harness now includes disabled templates for metadata discovery and discovery-to-72h dry-run. The first experiment may run real metadata discovery from arXiv, OpenAlex, Crossref, Semantic Scholar, and IETF, then CNI triage/watchlist, then metadata-only untrusted stubs for A/B + High candidates, then deterministic 72h dry-run.
+
+This path must not call real OpenRouter, must not send email/webhook, must not retrieve PDFs/full text, and must not bypass paywalls. If an OpenClaw config schema rejects `sourceDiscovery`, keep the fallback policy at `~/.openclaw/config/source_discovery.policy.json` and do not weaken runtime guard.

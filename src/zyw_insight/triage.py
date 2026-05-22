@@ -117,6 +117,12 @@ def _source_tier(text: str) -> tuple[str, str]:
 
 
 def _document_type(source: Dict[str, Any], text: str) -> str:
+    if _contains_any(text, ("document_type: production_report", "production report", "production system report")):
+        return "production_report"
+    if _contains_any(text, ("document_type: industrial_report", "industrial report")):
+        return "industrial_report"
+    if _contains_any(text, ("document_type: engineering_report", "engineering report")):
+        return "engineering_report"
     if "rfc" in text:
         return "rfc"
     if "standard" in text or "ietf" in text or "ieee" in text or "etsi" in text:
@@ -177,7 +183,17 @@ def triage_source(source: Dict[str, Any]) -> Dict[str, Any]:
 
     technical_signals = _detect_keywords(text, EXPERIMENT_KEYWORDS + BASELINE_KEYWORDS + tuple(k for values in DOMAIN_KEYWORDS.values() for k in values))
     marketing_or_low_evidence = bool({"marketing_language", "no_experiment_signal"} & set(risks)) or source_tier == "D"
-    if credibility == "High" and business_relevance == "High" and not marketing_or_low_evidence:
+    high_trust_industrial = (
+        document_type in {"industrial_report", "engineering_report", "production_report"}
+        and _contains_any(text, EXPERIMENT_KEYWORDS)
+        and _contains_any(text, BASELINE_KEYWORDS)
+        and _contains_any(text, ("p95", "p99", "tail", "worst-case"))
+        and "marketing_language" not in risks
+        and "no_experiment_signal" not in risks
+    )
+    if high_trust_industrial and business_relevance == "High":
+        deep_read_priority = "High"
+    elif credibility == "High" and business_relevance == "High" and not marketing_or_low_evidence:
         deep_read_priority = "High"
     elif credibility in {"High", "Medium"} and (business_relevance in {"High", "Medium"} or technical_signals):
         deep_read_priority = "Medium"

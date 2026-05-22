@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ZYWFulltextEligibility",
+  "type": "object",
+  "required": [
+    "candidate_id",
+    "source_provider",
+    "pdf_url",
+    "source_url",
+    "open_access",
+    "eligibility_reason",
+    "fetch_allowed",
+    "paywall_bypass",
+    "pdf_download_allowed",
+    "max_pdf_bytes",
+    "max_pages",
+    "max_extracted_chars",
+    "runtime_boundary"
+  ],
+  "properties": {
+    "candidate_id": {"type": "string"},
+    "source_provider": {"type": "string"},
+    "pdf_url": {"type": ["string", "null"]},
+    "source_url": {"type": ["string", "null"]},
+    "open_access": {"type": "boolean"},
+    "eligibility_reason": {"type": "string"},
+    "fetch_allowed": {"type": "boolean"},
+    "paywall_bypass": {"const": false},
+    "pdf_download_allowed": {"type": "boolean"},
+    "max_pdf_bytes": {"type": "integer"},
+    "max_pages": {"type": "integer"},
+    "max_extracted_chars": {"type": "integer"},
+    "runtime_boundary": {"type": "object"}
+  }
+}

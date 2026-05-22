@@ -35,7 +35,7 @@ SCENARIOS = {
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG_DIR = ROOT / "configs"
-STAGES = ("triage", "literature_analysis", "constraint_critic", "brief_synthesis", "final_review")
+STAGES = ("triage", "literature_analysis", "constraint_critic", "brief_synthesis", "cross_validation", "final_review")
 FORBIDDEN_PROVIDER_TERMS = ("codex", "coding-agent", "coding_agent", "oauth", "@openai/codex")
 
 

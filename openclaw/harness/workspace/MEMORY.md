@@ -23,6 +23,8 @@
 - Email draft workflow only creates local draft artifacts: email_draft.eml, email_draft.md, email_draft_manifest.json, and approval_checklist.md. It does not send email, does not use SMTP/sendmail/Webhook, does not read provider keys, and keeps human approval pending by default.
 - Pre-send review is a deterministic single-orchestrator review panel, not autonomous multi-agent runtime. It reviews evidence, constraints, delivery safety, readability, and budget/runtime boundary. Its strongest outcome is ready_for_human_review; external delivery remains manual.
 - Source discovery may perform real metadata-only network access to the approved providers arXiv, OpenAlex, Crossref, Semantic Scholar, and IETF. Discovery does not call OpenRouter, read provider keys, download PDFs, fetch full text, bypass paywalls, or send delivery. Candidates must pass CNI triage; A/B + High may enter deep-read candidates, C is signal-only, and D is background-only.
+- Discovery-to-pipeline dry-run materializes only A/B + High candidates as untrusted metadata stubs. The first OpenClaw experiment remains deterministic and draft-only: no real OpenRouter pipeline, no email/webhook send, no Codex runtime.
+- Manual full-paper canaries require open-access eligibility, A/B + High candidate selection, strict PDF/text extraction limits, redacted ledgers, and explicit real-call flags. They must not fetch paywalled PDFs, bypass paywalls, send email/webhooks, or run final_review / brief_synthesis real calls.
 
 ## CNI scoring weights
 

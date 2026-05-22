@@ -1,0 +1,19 @@
+{
+  "policy_id": "fulltext-open-access-v1",
+  "open_access_only": true,
+  "prefer_providers": ["arxiv"],
+  "provider_allowlist": ["arxiv"],
+  "open_access_pdf_domains": ["arxiv.org"],
+  "arbitrary_url_fetch_enabled": false,
+  "paywall_bypass_enabled": false,
+  "credential_use_enabled": false,
+  "publisher_pdf_fetch_enabled": false,
+  "allow_c_or_d_pdf_analysis": false,
+  "eligible_source_tiers": ["A", "B"],
+  "eligible_deep_read_priority": "High",
+  "max_pdf_bytes": 8000000,
+  "max_pages": 24,
+  "max_extracted_chars": 60000,
+  "timeout_seconds": 30,
+  "user_agent": "zyw-insight-fulltext/0.1 open-access-only"
+}

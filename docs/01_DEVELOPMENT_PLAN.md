@@ -262,6 +262,13 @@ PoC 阶段的 `model_router` 只返回 `openrouter/...` placeholder 和接口结
 - 第十五轮新增 small pipeline canary harness：默认 dry-run，真实调用必须人工触发，最多 1–2 篇资料，默认只允许 `literature_analysis` 真实 stage。`brief_synthesis`、`final_review` 和 cron 自动真实调用均禁止；deterministic pipeline 仍是主产物，real stage output 只作为 redacted validation artifact。
 - 第十六轮新增 real source discovery：agent 不只分析用户手动输入，也可以通过 metadata-only providers 自动发现候选论文/标准/技术资料。Discovery network 与 model/delivery network 分离；候选必须先进入 CNI triage，A/B + High 才进入深读候选，C 只作 signal，D 只作 background；不下载 PDF、不抓全文、不绕过 paywall、不自动调用 OpenRouter。
 
+## Pre-Experiment Discovery Pipeline Readiness
+
+- 新增 `run-discovery-72h-dry-run`：real metadata discovery -> discovery triage/watchlist -> metadata-only candidate stubs -> deterministic 72h dry-run -> adapter dry-run artifacts。
+- Discovery candidates 必须先进入 watchlist；只有 A/B + High 会材料化为 `UNTRUSTED METADATA ONLY` stub，C/D 继续保留为 signal/background。
+- 第一轮 OpenClaw experiment 只允许 real metadata discovery 和 deterministic local pipeline，不允许 real OpenRouter pipeline，不允许 email/webhook send。
+- OpenClaw runtime 继续保持 OpenRouter-only model boundary，且不得使用 Codex/Codex CLI/Codex OAuth/coding-agent provider。
+
 ### 第 4 阶段：正式运行
 
 - 多 agent 拆分。

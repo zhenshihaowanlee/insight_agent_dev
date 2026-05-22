@@ -17,7 +17,10 @@ from .budget import (
     load_budget_policy,
 )
 from .critic import critique_analysis
+from .discovery_pipeline import run_discovery_72h_dry_run
 from .email_draft import build_email_draft
+from .full_paper_canary import run_full_paper_canary, run_three_paper_fulltext_canary
+from .full_paper_consistency_critic import review_full_paper_analysis
 from .ingestion import ingest_file
 from .model_router import choose_model_for_stage
 from .openrouter_adapter import run_adapter_dry_run
@@ -69,13 +72,13 @@ def cmd_quality_check(args: argparse.Namespace) -> int:
 
 def cmd_ingest(args: argparse.Namespace) -> int:
     payload = ingest_file(Path(args.path))
-    print(json.dumps(payload, ensure_ascii=False, indent=2))
+    print(json.dumps(payload, ensure_ascii=False, indent=2 if getattr(args, "pretty", False) else None))
     return 0
 
 
 def cmd_triage(args: argparse.Namespace) -> int:
     payload = triage_path(Path(args.path))
-    print(json.dumps(payload, ensure_ascii=False, indent=2))
+    print(json.dumps(payload, ensure_ascii=False, indent=2 if getattr(args, "pretty", False) else None))
     return 0
 
 
@@ -126,6 +129,20 @@ def cmd_critique(args: argparse.Namespace) -> int:
         output.write_text(text + "\n", encoding="utf-8")
     else:
         print(text)
+    return 0
+
+
+def cmd_full_paper_review(args: argparse.Namespace) -> int:
+    payload = review_full_paper_analysis(args.analysis_json, run_audit_path=args.run_audit, output_dir=args.output_dir)
+    summary = {
+        "canonical_analysis_path": payload["artifacts"]["canonical_full_paper_analysis_json"],
+        "canonical_markdown_path": payload["artifacts"]["canonical_full_paper_analysis_md"],
+        "consistency_report_json": payload["artifacts"]["consistency_report_json"],
+        "consistency_report_md": payload["artifacts"]["consistency_report_md"],
+        "ready_for_three_paper_cross_validation": payload["report"]["ready_for_three_paper_cross_validation"],
+        "readiness_blockers": payload["report"]["readiness_blockers"],
+    }
+    print(json.dumps(summary, ensure_ascii=False, indent=2 if args.pretty else None))
     return 0
 
 
@@ -332,6 +349,70 @@ def cmd_pipeline_canary(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_full_paper_canary(args: argparse.Namespace) -> int:
+    payload = run_full_paper_canary(
+        query_profile=args.query_profile,
+        providers=args.provider,
+        max_candidates=args.max_candidates,
+        internal_model_id=args.internal_model_id,
+        environment=args.environment,
+        spent_usd=args.spent_usd,
+        max_cost_usd=args.max_cost_usd,
+        real_call=args.real_call,
+        allow_network=args.allow_network,
+        confirm_charge=args.confirm_openrouter_charge,
+        output_dir=args.output_dir,
+        arxiv_id=args.arxiv_id,
+        one_shot_fulltext=args.one_shot_fulltext,
+        allow_fulltext_prompt=args.allow_fulltext_prompt,
+        target_input_tokens=args.target_input_tokens,
+        max_input_tokens=args.max_input_tokens,
+        max_output_tokens=args.max_output_tokens,
+        max_total_tokens=args.max_total_tokens,
+        min_input_tokens_required=args.min_input_tokens_required,
+        min_output_tokens_expected=args.min_output_tokens_expected,
+        fail_if_input_under_min=args.fail_if_input_under_min,
+        fail_if_total_exceeds_context=args.fail_if_total_exceeds_context,
+        require_schema_valid_output=args.require_schema_valid_output,
+    )
+    text = json.dumps(payload, ensure_ascii=False, indent=2 if args.pretty else None)
+    if args.output:
+        output = Path(args.output)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(text + "\n", encoding="utf-8")
+    else:
+        print(text)
+    return 0
+
+
+def cmd_three_paper_fulltext_canary(args: argparse.Namespace) -> int:
+    payload = run_three_paper_fulltext_canary(
+        query_profile=args.query_profile,
+        providers=args.provider,
+        max_candidates=args.max_candidates,
+        max_papers=args.max_papers,
+        internal_model_id_analysis=args.internal_model_id_analysis,
+        internal_model_id_critic=args.internal_model_id_critic,
+        internal_model_id_cross_validation=args.internal_model_id_cross_validation,
+        environment=args.environment,
+        spent_usd=args.spent_usd,
+        max_cost_usd=args.max_cost_usd,
+        real_call=args.real_call,
+        allow_network=args.allow_network,
+        confirm_charge=args.confirm_openrouter_charge,
+        output_dir=args.output_dir,
+        arxiv_id=args.arxiv_id,
+    )
+    text = json.dumps(payload, ensure_ascii=False, indent=2 if args.pretty else None)
+    if args.output:
+        output = Path(args.output)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(text + "\n", encoding="utf-8")
+    else:
+        print(text)
+    return 0
+
+
 def cmd_email_draft(args: argparse.Namespace) -> int:
     payload = build_email_draft(
         args.run_dir_or_brief_path,
@@ -375,6 +456,7 @@ def cmd_discover_sources(args: argparse.Namespace) -> int:
         dry_run=args.dry_run,
         network_enabled=not args.no_network,
         metadata_only=True,
+        arxiv_id=args.arxiv_id,
     )
     validate_json(payload, "discovery_run")
     text = json.dumps(payload, ensure_ascii=False, indent=2 if args.pretty else None)
@@ -401,6 +483,27 @@ def cmd_discovery_triage(args: argparse.Namespace) -> int:
         "notes": ["discovery triage is metadata-only and does not call models"],
     }
     text = json.dumps(result, ensure_ascii=False, indent=2 if args.pretty else None)
+    if args.output:
+        output = Path(args.output)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(text + "\n", encoding="utf-8")
+    else:
+        print(text)
+    return 0
+
+
+def cmd_run_discovery_72h_dry_run(args: argparse.Namespace) -> int:
+    payload = run_discovery_72h_dry_run(
+        query_profile=args.query_profile,
+        providers=args.provider,
+        max_candidates=args.max_candidates,
+        max_selected=args.max_selected,
+        output_dir=args.output_dir,
+        environment=args.environment,
+        spent_usd=args.spent_usd,
+        window_hours=args.window_hours,
+    )
+    text = json.dumps(payload, ensure_ascii=False, indent=2 if args.pretty else None)
     if args.output:
         output = Path(args.output)
         output.parent.mkdir(parents=True, exist_ok=True)
@@ -437,10 +540,12 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_ingest = sub.add_parser("ingest")
     p_ingest.add_argument("path")
+    p_ingest.add_argument("--pretty", action="store_true")
     p_ingest.set_defaults(func=cmd_ingest)
 
     p_triage = sub.add_parser("triage")
     p_triage.add_argument("path")
+    p_triage.add_argument("--pretty", action="store_true")
     p_triage.set_defaults(func=cmd_triage)
 
     p_analyze = sub.add_parser("analyze")
@@ -559,6 +664,61 @@ def build_parser() -> argparse.ArgumentParser:
     p_pipeline_canary.add_argument("--output")
     p_pipeline_canary.set_defaults(func=cmd_pipeline_canary)
 
+    p_full_paper = sub.add_parser("full-paper-canary")
+    p_full_paper.add_argument("--query-profile", default="datacenter_networking")
+    p_full_paper.add_argument("--provider", action="append", choices=["arxiv", "openalex", "crossref", "semantic_scholar", "ietf"])
+    p_full_paper.add_argument("--arxiv-id")
+    p_full_paper.add_argument("--max-candidates", type=int, default=20)
+    p_full_paper.add_argument("--internal-model-id", default="openrouter/qwen/qwen3.5-397b-a17b")
+    p_full_paper.add_argument("--environment", choices=["poc", "production", "quality_first", "research", "flagship"], default="quality_first")
+    p_full_paper.add_argument("--spent-usd", type=float, default=0.0)
+    p_full_paper.add_argument("--max-cost-usd", type=float, default=5.0)
+    p_full_paper.add_argument("--real-call", action="store_true")
+    p_full_paper.add_argument("--allow-network", action="store_true")
+    p_full_paper.add_argument("--confirm-openrouter-charge", action="store_true")
+    p_full_paper.add_argument("--output-dir")
+    p_full_paper.add_argument("--one-shot-fulltext", action="store_true")
+    p_full_paper.add_argument("--allow-fulltext-prompt", action="store_true")
+    p_full_paper.add_argument("--target-input-tokens", type=int)
+    p_full_paper.add_argument("--max-input-tokens", type=int)
+    p_full_paper.add_argument("--max-output-tokens", type=int)
+    p_full_paper.add_argument("--max-total-tokens", type=int)
+    p_full_paper.add_argument("--min-input-tokens-required", type=int)
+    p_full_paper.add_argument("--min-output-tokens-expected", type=int)
+    p_full_paper.add_argument("--fail-if-input-under-min", action="store_true")
+    p_full_paper.add_argument("--fail-if-total-exceeds-context", action="store_true")
+    p_full_paper.add_argument("--require-schema-valid-output", action="store_true")
+    p_full_paper.add_argument("--pretty", action="store_true")
+    p_full_paper.add_argument("--output")
+    p_full_paper.set_defaults(func=cmd_full_paper_canary)
+
+    p_full_paper_review = sub.add_parser("full-paper-review")
+    p_full_paper_review.add_argument("analysis_json")
+    p_full_paper_review.add_argument("--run-audit")
+    p_full_paper_review.add_argument("--output-dir")
+    p_full_paper_review.add_argument("--pretty", action="store_true")
+    p_full_paper_review.set_defaults(func=cmd_full_paper_review)
+
+    p_three_fulltext = sub.add_parser("three-paper-fulltext-canary")
+    p_three_fulltext.add_argument("--query-profile", default="datacenter_networking")
+    p_three_fulltext.add_argument("--provider", action="append", choices=["arxiv", "openalex", "crossref", "semantic_scholar", "ietf"])
+    p_three_fulltext.add_argument("--arxiv-id")
+    p_three_fulltext.add_argument("--max-candidates", type=int, default=30)
+    p_three_fulltext.add_argument("--max-papers", type=int, default=3)
+    p_three_fulltext.add_argument("--internal-model-id-analysis", default="openrouter/qwen/qwen3.5-397b-a17b")
+    p_three_fulltext.add_argument("--internal-model-id-critic", default="openrouter/qwen/qwen3.5-397b-a17b")
+    p_three_fulltext.add_argument("--internal-model-id-cross-validation", default="openrouter/qwen/qwen3.5-397b-a17b")
+    p_three_fulltext.add_argument("--environment", choices=["poc", "production", "quality_first", "research", "flagship"], default="quality_first")
+    p_three_fulltext.add_argument("--spent-usd", type=float, default=0.0)
+    p_three_fulltext.add_argument("--max-cost-usd", type=float, default=20.0)
+    p_three_fulltext.add_argument("--real-call", action="store_true")
+    p_three_fulltext.add_argument("--allow-network", action="store_true")
+    p_three_fulltext.add_argument("--confirm-openrouter-charge", action="store_true")
+    p_three_fulltext.add_argument("--output-dir")
+    p_three_fulltext.add_argument("--pretty", action="store_true")
+    p_three_fulltext.add_argument("--output")
+    p_three_fulltext.set_defaults(func=cmd_three_paper_fulltext_canary)
+
     p_email = sub.add_parser("email-draft")
     p_email.add_argument("run_dir_or_brief_path")
     p_email.add_argument("--output-dir")
@@ -582,6 +742,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_discover = sub.add_parser("discover-sources")
     p_discover.add_argument("--query-profile", default="datacenter_networking")
     p_discover.add_argument("--provider", action="append", choices=["arxiv", "openalex", "crossref", "semantic_scholar", "ietf"])
+    p_discover.add_argument("--arxiv-id")
     p_discover.add_argument("--max-candidates", type=int)
     p_discover.add_argument("--dry-run", action="store_true")
     p_discover.add_argument("--no-network", action="store_true")
@@ -595,6 +756,19 @@ def build_parser() -> argparse.ArgumentParser:
     p_discovery_triage.add_argument("--pretty", action="store_true")
     p_discovery_triage.add_argument("--output")
     p_discovery_triage.set_defaults(func=cmd_discovery_triage)
+
+    p_discovery_pipeline = sub.add_parser("run-discovery-72h-dry-run")
+    p_discovery_pipeline.add_argument("--query-profile", default="datacenter_networking")
+    p_discovery_pipeline.add_argument("--provider", action="append", choices=["arxiv", "openalex", "crossref", "semantic_scholar", "ietf"])
+    p_discovery_pipeline.add_argument("--max-candidates", type=int, default=20)
+    p_discovery_pipeline.add_argument("--max-selected", type=int, default=5)
+    p_discovery_pipeline.add_argument("--output-dir")
+    p_discovery_pipeline.add_argument("--environment", choices=["poc", "production", "quality_first", "research", "flagship"], default="quality_first")
+    p_discovery_pipeline.add_argument("--spent-usd", type=float, default=0.0)
+    p_discovery_pipeline.add_argument("--window-hours", type=int, default=72)
+    p_discovery_pipeline.add_argument("--pretty", action="store_true")
+    p_discovery_pipeline.add_argument("--output")
+    p_discovery_pipeline.set_defaults(func=cmd_run_discovery_72h_dry_run)
 
     p_runtime_guard = sub.add_parser("runtime-guard")
     p_runtime_guard.add_argument("path")

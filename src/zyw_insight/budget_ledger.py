@@ -20,6 +20,7 @@ FORBIDDEN_EVENT_KEYS = {
     "headers",
     "reasoning",
     "reasoning_details",
+    "selected_text",
 }
 
 

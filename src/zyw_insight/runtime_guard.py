@@ -75,6 +75,9 @@ def check_runtime_config(path: str | Path) -> RuntimeGuardResult:
     failures.extend(_check_openrouter_canary())
     failures.extend(_check_pipeline_canary())
     failures.extend(_check_source_discovery())
+    failures.extend(_check_discovery_pipeline_integration())
+    failures.extend(_check_fulltext_canary_boundary())
+    failures.extend(_check_openclaw_source_discovery_policy(text))
     failures.extend(_check_pipeline_dry_run())
     failures.extend(_check_email_draft_workflow())
     failures.extend(_check_pre_send_review())
@@ -448,6 +451,232 @@ def _check_source_discovery() -> list[str]:
         for marker in forbidden:
             if marker in lowered:
                 failures.append(f"{path.name} contains forbidden discovery cron marker: {marker}")
+    return failures
+
+
+def _check_discovery_pipeline_integration() -> list[str]:
+    failures: list[str] = []
+    cli = SRC_DIR / "cli.py"
+    module = SRC_DIR / "discovery_pipeline.py"
+    if not cli.exists():
+        failures.append("cli.py missing")
+    else:
+        text = cli.read_text(encoding="utf-8")
+        if "run-discovery-72h-dry-run" not in text:
+            failures.append("CLI must expose run-discovery-72h-dry-run")
+    if not module.exists():
+        failures.append("discovery_pipeline.py missing")
+        return failures
+
+    text = module.read_text(encoding="utf-8")
+    lowered = text.lower()
+    required_markers = (
+        "untrusted metadata only",
+        "no full text fetched",
+        "no pdf downloaded",
+        "not sufficient for strong conclusion",
+        "body_is_untrusted: true",
+        "eligible_source_tiers",
+        "eligible_deep_read_priority",
+        "signal_only_tiers",
+        "background_only_tiers",
+        "selected_candidate_stubs",
+        "candidate_to_pipeline_input",
+        "run_72h_dry_run_pipeline",
+        "api_key_read",
+    )
+    for marker in required_markers:
+        if marker not in lowered:
+            failures.append(f"discovery_pipeline.py missing required marker: {marker}")
+
+    forbidden_markers = (
+        "os.environ",
+        "openrouter_api_key",
+        "execute_openrouter_canary(",
+        "openrouter-canary",
+        "pipeline-canary",
+        "--real-call",
+        "--allow-network",
+        "--confirm-openrouter-charge",
+        "requests.post",
+        "httpx",
+        "aiohttp",
+        "urllib.request.urlopen",
+        "smtplib",
+        "sendmail",
+        "webhook_url",
+        "webhook(",
+        "download_pdf",
+        "fetch_fulltext",
+        "bypass_paywall",
+        "pdf_downloaded\": true",
+        "fulltext_fetched\": true",
+        "paywall_bypassed\": true",
+    )
+    for marker in forbidden_markers:
+        if marker in lowered:
+            failures.append(f"discovery_pipeline.py contains forbidden marker: {marker}")
+    for pattern in SECRET_PATTERNS:
+        if re.search(pattern, text, flags=re.IGNORECASE):
+            failures.append(f"discovery_pipeline.py possible secret found: {pattern}")
+
+    if CRON_DIR.exists():
+        forbidden_cron_terms = (
+            "--real-call",
+            "--allow-network",
+            "--confirm-openrouter-charge",
+            "OPENROUTER_API_KEY",
+            "pdf download",
+            "download pdf",
+            "download_pdf",
+            "smtp",
+            "sendmail",
+            "webhook",
+            "curl",
+            "openrouter-canary",
+        )
+        for path in sorted(CRON_DIR.glob("zyw_*.config.json5")) + [p for p in sorted(CRON_DIR.glob("zyw_*.prompt.md")) if "_manual" not in p.name]:
+            lowered_cron = path.read_text(encoding="utf-8").lower()
+            for term in forbidden_cron_terms:
+                if term.lower() in lowered_cron:
+                    failures.append(f"{path.name} contains forbidden OpenClaw cron marker: {term}")
+    return failures
+
+
+def _check_fulltext_canary_boundary() -> list[str]:
+    failures: list[str] = []
+    config_path = CONFIG_DIR / "fulltext_policy.json"
+    if not config_path.exists():
+        failures.append("fulltext_policy.json missing")
+        return failures
+    try:
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        failures.append(f"fulltext_policy.json invalid JSON: {exc}")
+        return failures
+    expected_false = (
+        "arbitrary_url_fetch_enabled",
+        "paywall_bypass_enabled",
+        "credential_use_enabled",
+        "publisher_pdf_fetch_enabled",
+        "allow_c_or_d_pdf_analysis",
+    )
+    for key in expected_false:
+        if config.get(key) is not False:
+            failures.append(f"fulltext_policy.json {key} must be false")
+    if config.get("open_access_only") is not True:
+        failures.append("fulltext_policy.json open_access_only must be true")
+    if "arxiv" not in set(config.get("provider_allowlist") or []):
+        failures.append("fulltext_policy.json provider_allowlist must include arxiv")
+    for key in ("max_pdf_bytes", "max_pages", "max_extracted_chars"):
+        if not isinstance(config.get(key), int) or config.get(key) <= 0:
+            failures.append(f"fulltext_policy.json {key} must be positive integer")
+
+    token_policy_path = CONFIG_DIR / "fulltext_token_policy.json"
+    if not token_policy_path.exists():
+        failures.append("fulltext_token_policy.json missing")
+    else:
+        try:
+            token_policy = json.loads(token_policy_path.read_text(encoding="utf-8")).get("one_shot_full_paper") or {}
+        except json.JSONDecodeError as exc:
+            failures.append(f"fulltext_token_policy.json invalid JSON: {exc}")
+            token_policy = {}
+        if int(token_policy.get("max_output_tokens_hard") or 0) <= 256:
+            failures.append("fulltext_token_policy.json one-shot max_output_tokens_hard must be greater than 256")
+
+    for schema_name in ("fulltext_eligibility.schema.json", "fulltext_artifact.schema.json", "cross_validation_report.schema.json", "fulltext_prompt_audit.schema.json", "full_paper_analysis_run.schema.json", "token_budget.schema.json"):
+        if not (SCHEMA_DIR / schema_name).exists():
+            failures.append(f"{schema_name} missing")
+
+    modules = {
+        "fulltext_eligibility.py": ("open_access_only", "paywall_bypass", "fetch_allowed", "C/D candidates cannot enter fulltext analysis"),
+        "fulltext_fetch.py": ("max_pdf_bytes", "max_pages", "max_extracted_chars", "body_logged_to_ledger", "ocr_used"),
+        "pdf_text_extract.py": ("ocr_used", "loop_count", "max_chars"),
+        "full_paper_canary.py": ("full-paper", "three", "final_review_real_call_executed", "brief_synthesis_real_call_executed", "execute_openrouter_canary", "allow_fulltext_prompt", "one_shot_fulltext", "fulltext_prompt_audit", "model_cni_schema_valid"),
+        "cross_validation.py": ("claims_full_paper_cross_validation", "full_text_limited_cross_validation", "final_review_real_call_executed"),
+    }
+    for module_name, required_markers in modules.items():
+        path = SRC_DIR / module_name
+        if not path.exists():
+            failures.append(f"{module_name} missing")
+            continue
+        text = path.read_text(encoding="utf-8")
+        lowered = text.lower()
+        for marker in required_markers:
+            if marker.lower() not in lowered:
+                failures.append(f"{module_name} missing marker: {marker}")
+        for forbidden in ("openrouter_api_key", "smtplib", "sendmail", "webhook_url", "webhook(", "final_review\",", "brief_synthesis\","):
+            if forbidden in lowered:
+                failures.append(f"{module_name} contains forbidden marker: {forbidden}")
+        if module_name in {"fulltext_fetch.py", "pdf_text_extract.py"} and "ocr" in lowered and "ocr_used" not in lowered:
+            failures.append(f"{module_name} mentions OCR without explicit disabled marker")
+        for pattern in SECRET_PATTERNS:
+            if re.search(pattern, text, flags=re.IGNORECASE):
+                failures.append(f"{module_name} possible secret found: {pattern}")
+
+    canary_text = (SRC_DIR / "openrouter_canary.py").read_text(encoding="utf-8") if (SRC_DIR / "openrouter_canary.py").exists() else ""
+    if "messages_sha256" not in canary_text or "messages_redacted" not in canary_text:
+        failures.append("openrouter_canary.py must redact one-shot messages with hash markers")
+    if "selected_text" not in canary_text or "transient OpenRouter request" not in canary_text:
+        failures.append("openrouter_canary.py must mark selected_text as transient fulltext prompt data")
+    ledger_text = (SRC_DIR / "budget_ledger.py").read_text(encoding="utf-8") if (SRC_DIR / "budget_ledger.py").exists() else ""
+    for forbidden_key in ("selected_text", "messages", "body", "content", "reasoning", "reasoning_details"):
+        if forbidden_key not in ledger_text:
+            failures.append(f"budget_ledger.py must forbid ledger key: {forbidden_key}")
+
+    for path in (
+        CRON_DIR / "zyw_full_paper_canary_manual.prompt.md",
+        CRON_DIR / "zyw_three_paper_cross_validation_manual.prompt.md",
+    ):
+        if not path.exists():
+            failures.append(f"{path.name} missing")
+            continue
+        lowered = path.read_text(encoding="utf-8").lower()
+        for marker in ("manual only", "do not run automatically", "requires", "--real-call", "--allow-network", "--confirm-openrouter-charge", "no final_review", "no email"):
+            if marker not in lowered:
+                failures.append(f"{path.name} missing required manual template marker: {marker}")
+        if "enabled: true" in lowered:
+            failures.append(f"{path.name} must not enable cron")
+    return failures
+
+
+def _check_openclaw_source_discovery_policy(config_text: str) -> list[str]:
+    failures: list[str] = []
+    lowered = config_text.lower()
+    if "sourcediscovery" not in lowered:
+        policy_path = ROOT / "openclaw" / "harness" / "config" / "source_discovery.policy.json"
+        if not policy_path.exists():
+            failures.append("OpenClaw config has no sourceDiscovery block and fallback source_discovery.policy.json is missing")
+            return failures
+        try:
+            policy = json.loads(policy_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            failures.append(f"source_discovery.policy.json invalid JSON: {exc}")
+            return failures
+        if policy.get("providerAllowlist") != ["arxiv", "openalex", "crossref", "semantic_scholar", "ietf"]:
+            failures.append("source_discovery.policy.json providerAllowlist must match approved providers")
+        for key in ("modelNetworkAllowedByDiscovery", "deliveryNetworkAllowedByDiscovery", "pdfDownloadEnabled", "fulltextFetchEnabled", "paywallBypassEnabled"):
+            if policy.get(key) is not False:
+                failures.append(f"source_discovery.policy.json {key} must be false")
+        return failures
+
+    required_terms = (
+        "realmetadatadiscoveryenabled",
+        "discoverynetworkallowed",
+        "modelnetworkallowedbydiscovery: false",
+        "deliverynetworkallowedbydiscovery: false",
+        "pdfdownloadenabled: false",
+        "fulltextfetchenabled: false",
+        "paywallbypassenabled: false",
+        '"arxiv"',
+        '"openalex"',
+        '"crossref"',
+        '"semantic_scholar"',
+        '"ietf"',
+    )
+    for term in required_terms:
+        if term.lower() not in lowered:
+            failures.append(f"OpenClaw sourceDiscovery missing safe setting: {term}")
     return failures
 
 

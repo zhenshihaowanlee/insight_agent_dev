@@ -1,0 +1,11 @@
+{
+  "one_shot_full_paper": {
+    "min_input_tokens_required": 8000,
+    "target_input_tokens": 18000,
+    "max_input_tokens_hard": 28000,
+    "max_output_tokens_hard": 5000,
+    "min_output_tokens_expected": 1500,
+    "max_total_tokens_hard": 35000,
+    "max_cost_usd": 15
+  }
+}

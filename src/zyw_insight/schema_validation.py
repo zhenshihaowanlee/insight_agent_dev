@@ -417,6 +417,126 @@ def _minimal_validate(data: Dict[str, Any], schema: Dict[str, Any]) -> List[str]
                 if candidate.get("strong_conclusion_allowed") is True:
                     errors.append(f"discovery_run.candidates[{index}] must not allow strong conclusion")
 
+    if schema.get("title") == "ZYWFulltextEligibility":
+        _check_no_secret_values(data, errors, "fulltext_eligibility")
+        if data.get("paywall_bypass") is not False:
+            errors.append("fulltext_eligibility.paywall_bypass must be false")
+        boundary = data.get("runtime_boundary", {})
+        if not isinstance(boundary, dict):
+            errors.append("fulltext_eligibility.runtime_boundary must be object")
+        else:
+            for key in ("arbitrary_url_fetch_enabled", "paywall_bypass_enabled", "credentials_used", "publisher_pdf_fetch_enabled", "codex_runtime_used"):
+                if boundary.get(key) is not False:
+                    errors.append(f"fulltext_eligibility.runtime_boundary.{key} must be false")
+            if boundary.get("open_access_only") is not True:
+                errors.append("fulltext_eligibility.runtime_boundary.open_access_only must be true")
+        if data.get("fetch_allowed") is True:
+            if data.get("open_access") is not True:
+                errors.append("fulltext_eligibility.fetch_allowed requires open_access=true")
+            if data.get("pdf_download_allowed") is not True:
+                errors.append("fulltext_eligibility.fetch_allowed requires pdf_download_allowed=true")
+            if not isinstance(data.get("pdf_url"), str) or "arxiv.org/pdf/" not in data.get("pdf_url", ""):
+                errors.append("fulltext_eligibility.fetch_allowed requires allowed arXiv pdf_url")
+            triage = data.get("triage") or {}
+            if triage.get("source_tier") not in {"A", "B"} or triage.get("deep_read_priority") != "High":
+                errors.append("fulltext_eligibility.fetch_allowed requires A/B + High triage")
+
+    if schema.get("title") == "ZYWFulltextArtifact":
+        _check_no_secret_values(data, errors, "fulltext_artifact")
+        if data.get("open_access") is not True:
+            errors.append("fulltext_artifact.open_access must be true")
+        if data.get("paywall_bypassed") is not False:
+            errors.append("fulltext_artifact.paywall_bypassed must be false")
+        if data.get("body_is_untrusted") is not True:
+            errors.append("fulltext_artifact.body_is_untrusted must be true")
+        boundary = data.get("runtime_boundary", {})
+        if not isinstance(boundary, dict):
+            errors.append("fulltext_artifact.runtime_boundary must be object")
+        else:
+            for key in ("max_pdf_bytes_enforced", "max_pages_enforced", "max_extracted_chars_enforced"):
+                if boundary.get(key) is not True:
+                    errors.append(f"fulltext_artifact.runtime_boundary.{key} must be true")
+            for key in ("ocr_used", "paywall_bypassed", "credentials_used", "body_logged_to_ledger", "codex_runtime_used"):
+                if boundary.get(key) is not False:
+                    errors.append(f"fulltext_artifact.runtime_boundary.{key} must be false")
+
+    if schema.get("title") == "ZYWThreePaperCrossValidationReport":
+        _check_no_secret_values(data, errors, "cross_validation_report")
+        if data.get("confidence") not in {"high", "medium", "low", "weak"}:
+            errors.append(f"cross_validation_report.confidence invalid: {data.get('confidence')!r}")
+        boundary = data.get("runtime_boundary", {})
+        if not isinstance(boundary, dict):
+            errors.append("cross_validation_report.runtime_boundary must be object")
+        else:
+            for key in ("final_review_real_call_executed", "brief_synthesis_real_call_executed", "email_sent", "webhook_sent", "codex_runtime_used"):
+                if boundary.get(key) is not False:
+                    errors.append(f"cross_validation_report.runtime_boundary.{key} must be false")
+        validation = data.get("validation", {})
+        if not isinstance(validation, dict):
+            errors.append("cross_validation_report.validation must be object")
+        elif validation.get("claims_full_paper_cross_validation") is True:
+            errors.append("cross_validation_report must not claim full-paper cross-validation")
+
+    if schema.get("title") == "ZYWFulltextPromptAudit":
+        _check_no_secret_values(data, errors, "fulltext_prompt_audit")
+        if data.get("prompt_includes_fulltext_excerpt") is not True:
+            errors.append("fulltext_prompt_audit.prompt_includes_fulltext_excerpt must be true")
+        if data.get("one_shot_fulltext_attempt") is not True:
+            errors.append("fulltext_prompt_audit.one_shot_fulltext_attempt must be true")
+
+    if schema.get("title") == "ZYWFullPaperAnalysisRun":
+        _check_no_secret_values(data, errors, "full_paper_analysis_run")
+        if data.get("one_shot_fulltext_attempt") is not True:
+            errors.append("full_paper_analysis_run.one_shot_fulltext_attempt must be true")
+        boundary = data.get("runtime_boundary", {})
+        if not isinstance(boundary, dict):
+            errors.append("full_paper_analysis_run.runtime_boundary must be object")
+        else:
+            for key in ("codex_runtime_used", "final_review_real_call_executed", "brief_synthesis_real_call_executed", "email_sent", "webhook_sent"):
+                if boundary.get(key) is not False:
+                    errors.append(f"full_paper_analysis_run.runtime_boundary.{key} must be false")
+        redaction = data.get("redaction", {})
+        if not isinstance(redaction, dict):
+            errors.append("full_paper_analysis_run.redaction must be object")
+        else:
+            for key in ("messages_redacted", "response_content_redacted", "reasoning_redacted"):
+                if redaction.get(key) is not True:
+                    errors.append(f"full_paper_analysis_run.redaction.{key} must be true")
+
+    if schema.get("title") == "ZYWCanonicalFullPaperAnalysis":
+        _check_no_secret_values(data, errors, "canonical_full_paper_analysis")
+        provenance = data.get("provenance", {})
+        if not isinstance(provenance, dict):
+            errors.append("canonical_full_paper_analysis.provenance must be object")
+        else:
+            if provenance.get("real_call_executed") is True and provenance.get("analysis_mode") != "model_backed_full_text_limited_analysis":
+                errors.append("canonical_full_paper_analysis.provenance.analysis_mode must reflect real model call")
+            for note in provenance.get("guardrail_notes") or []:
+                if "No model call was made" in str(note) or "No network access was used" in str(note):
+                    errors.append("canonical_full_paper_analysis.provenance contains stale no-model/no-network note")
+        domains = data.get("domains", {})
+        if not isinstance(domains, dict):
+            errors.append("canonical_full_paper_analysis.domains must be object")
+        elif domains.get("primary_domain") not in {"AI cluster networking", "unknown"} and "MegaScale-Infer" in str((data.get("source") or {}).get("title")):
+            errors.append("MegaScale-Infer canonical primary_domain must be AI cluster networking")
+        if "vendor_claim" in (data.get("risk_flags") or []) and (data.get("source") or {}).get("source_tier") == "A":
+            errors.append("canonical_full_paper_analysis must not keep vendor_claim for A-tier paper by default")
+        action = data.get("action", {})
+        if not isinstance(action, dict):
+            errors.append("canonical_full_paper_analysis.action must be object")
+        elif action.get("recommended_action") not in ALLOWED_ACTIONS:
+            errors.append(f"canonical_full_paper_analysis.action.recommended_action invalid: {action.get('recommended_action')!r}")
+        network = data.get("network_impact_vector", {})
+        if not isinstance(network, dict):
+            errors.append("canonical_full_paper_analysis.network_impact_vector must be object")
+        else:
+            for key in NETWORK_IMPACT_KEYS:
+                item = network.get(key)
+                if not isinstance(item, dict):
+                    errors.append(f"canonical_full_paper_analysis.network_impact_vector.{key} missing")
+                elif item.get("impact") not in ALLOWED_IMPACTS:
+                    errors.append(f"canonical_full_paper_analysis.network_impact_vector.{key}.impact invalid")
+
     if schema.get("title") == "CNI72hDryRunPipelineRun":
         _check_no_secret_like(data, errors, "pipeline_run")
         if data.get("dry_run") is not True:

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ZYWTokenBudget",
+  "type": "object",
+  "required": [
+    "rough_estimated_input_tokens",
+    "conservative_estimated_input_tokens",
+    "max_input_tokens_hard",
+    "target_input_tokens",
+    "expected_actual_input_safe"
+  ],
+  "properties": {
+    "rough_estimated_input_tokens": {"type": "integer"},
+    "conservative_estimated_input_tokens": {"type": "integer"},
+    "max_input_tokens_hard": {"type": "integer"},
+    "target_input_tokens": {"type": "integer"},
+    "expected_actual_input_safe": {"type": "boolean"}
+  },
+  "additionalProperties": true
+}

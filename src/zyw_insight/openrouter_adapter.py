@@ -17,6 +17,7 @@ STAGE_PRICE_HINTS = {
     "literature_analysis": (1.25, 10.0),
     "constraint_critic": (2.5, 15.0),
     "brief_synthesis": (3.0, 15.0),
+    "cross_validation": (1.25, 10.0),
     "final_review": (5.0, 30.0),
 }
 FORBIDDEN_LOG_KEYS = {"body", "raw_body", "content", "messages", "api_key", "token", "secret", "authorization", "env"}
@@ -101,6 +102,7 @@ def _response_schema_for_stage(stage: str) -> str:
         "literature_analysis": "literature_analysis",
         "constraint_critic": "constraint_critic",
         "brief_synthesis": "brief",
+        "cross_validation": "cross_validation_report",
         "final_review": "review_decision",
     }.get(stage, "json")
 

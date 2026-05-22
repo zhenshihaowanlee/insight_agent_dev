@@ -1,0 +1,34 @@
+{
+  "title": "ZYWCanonicalFullPaperAnalysis",
+  "type": "object",
+  "required": [
+    "canonical_analysis_id",
+    "source",
+    "provenance",
+    "domains",
+    "cni_sections",
+    "network_impact_vector",
+    "evidence_quality",
+    "score",
+    "action",
+    "consistency_audit",
+    "deprecated_fields",
+    "validation",
+    "artifact_paths"
+  ],
+  "properties": {
+    "canonical_analysis_id": {"type": "string"},
+    "source": {"type": "object"},
+    "provenance": {"type": "object"},
+    "domains": {"type": "object"},
+    "cni_sections": {"type": "object"},
+    "network_impact_vector": {"type": "object"},
+    "evidence_quality": {},
+    "score": {"type": "object"},
+    "action": {"type": "object"},
+    "consistency_audit": {"type": "array"},
+    "deprecated_fields": {"type": "object"},
+    "validation": {"type": "object"},
+    "artifact_paths": {"type": "object"}
+  }
+}

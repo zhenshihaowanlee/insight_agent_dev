@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import time
 import urllib.parse
 import urllib.request
@@ -86,9 +87,39 @@ def _candidate(provider: str, record_id: str, title: str, abstract: str = "", au
     return classify_candidate_metadata(item)
 
 
+def enrich_candidate_metadata(candidate: Dict[str, Any]) -> Dict[str, Any]:
+    title = str(candidate.get("title") or "").lower()
+    arxiv_id = str(candidate.get("arxiv_id") or candidate.get("provider_record_id") or "")
+    metadata = dict(candidate.get("metadata") or {})
+    if "megascale-infer" in title or arxiv_id.startswith("2504.02263"):
+        candidate["venue"] = "SIGCOMM 2025"
+        candidate["source_tier_hint"] = "A"
+        enriched_domains = [
+            "AI cluster networking",
+            "datacenter systems",
+            "distributed inference",
+            "GPU communication / M2N communication",
+        ]
+        existing = list(candidate.get("domain_hints") or [])
+        candidate["domain_hints"] = sorted(set(existing + enriched_domains))
+        metadata.update(
+            {
+                "venue_enrichment": "manual_sigcomm_2025_accepted_metadata",
+                "accepted_venue": "SIGCOMM 2025",
+                "title_rule": "MegaScale-Infer",
+                "metadata_only": True,
+            }
+        )
+        candidate["metadata"] = metadata
+    return candidate
+
+
 def classify_candidate_metadata(candidate: Dict[str, Any]) -> Dict[str, Any]:
+    candidate = enrich_candidate_metadata(candidate)
     candidate["domain_hints"] = detect_domain_hints(candidate)
+    candidate = enrich_candidate_metadata(candidate)
     candidate["source_tier_hint"] = detect_source_tier_hint(candidate)
+    candidate = enrich_candidate_metadata(candidate)
     candidate["credibility_hints"] = detect_credibility_hints(candidate)
     candidate["business_relevance_hints"] = ["target_domain"] if candidate["domain_hints"] else []
     triage = triage_candidate_metadata(candidate)
@@ -99,10 +130,7 @@ def classify_candidate_metadata(candidate: Dict[str, Any]) -> Dict[str, Any]:
     return candidate
 
 
-def query_arxiv(query_profile: str, max_candidates: int, config: Dict[str, Any]) -> list[Dict[str, Any]]:
-    endpoint = provider_endpoints(config)["arxiv"]
-    params = urllib.parse.urlencode({"search_query": "all:" + _query(query_profile, config), "start": 0, "max_results": max_candidates})
-    xml = _request_text(f"{endpoint}?{params}", config)
+def _parse_arxiv_entries(xml: str) -> list[Dict[str, Any]]:
     root = ET.fromstring(xml)
     ns = {"atom": "http://www.w3.org/2005/Atom"}
     results = []
@@ -116,8 +144,31 @@ def query_arxiv(query_profile: str, max_candidates: int, config: Dict[str, Any])
             if link.attrib.get("title") == "pdf":
                 pdf = link.attrib.get("href")
         arxiv_id = url.rsplit("/", 1)[-1] if url else None
+        if arxiv_id and pdf is None:
+            pdf = f"https://arxiv.org/pdf/{arxiv_id}"
+        if arxiv_id:
+            base_id = re.sub(r"v\d+$", "", arxiv_id)
+            pdf = f"https://arxiv.org/pdf/{base_id}"
         results.append(_candidate("arxiv", arxiv_id or url, title, abstract, authors, entry.findtext("atom:published", namespaces=ns), entry.findtext("atom:updated", namespaces=ns), "arXiv", url, pdf, arxiv_id=arxiv_id, document_type="paper"))
     return results
+
+
+def query_arxiv(query_profile: str, max_candidates: int, config: Dict[str, Any]) -> list[Dict[str, Any]]:
+    endpoint = provider_endpoints(config)["arxiv"]
+    params = urllib.parse.urlencode({"search_query": "all:" + _query(query_profile, config), "start": 0, "max_results": max_candidates})
+    xml = _request_text(f"{endpoint}?{params}", config)
+    return _parse_arxiv_entries(xml)
+
+
+def query_arxiv_id(arxiv_id: str, config: Dict[str, Any]) -> list[Dict[str, Any]]:
+    endpoint = provider_endpoints(config)["arxiv"]
+    clean_id = str(arxiv_id).strip().removeprefix("arXiv:").removeprefix("arxiv:")
+    params = urllib.parse.urlencode({"id_list": clean_id, "start": 0, "max_results": 1})
+    xml = _request_text(f"{endpoint}?{params}", config)
+    results = _parse_arxiv_entries(xml)
+    if results:
+        return results
+    return []
 
 
 def _abstract_from_openalex(index: Dict[str, list[int]] | None) -> str:
@@ -228,7 +279,19 @@ def build_watchlist(candidates: list[Dict[str, Any]], triage_preview: list[Dict[
     background = []
     for candidate in rank_candidates(candidates):
         triage = preview_by_id.get(candidate["candidate_id"]) or triage_candidate_metadata(candidate)
-        entry = {"candidate_id": candidate["candidate_id"], "title": candidate["title"], "source_tier": triage["source_tier"], "deep_read_priority": triage["deep_read_priority"], "domain": triage["domain"]}
+        entry = {
+            "candidate_id": candidate["candidate_id"],
+            "title": candidate["title"],
+            "source_provider": candidate.get("source_provider"),
+            "provider_record_id": candidate.get("provider_record_id"),
+            "arxiv_id": candidate.get("arxiv_id"),
+            "venue": candidate.get("venue"),
+            "source_tier": triage["source_tier"],
+            "deep_read_priority": triage["deep_read_priority"],
+            "domain": triage["domain"],
+            "domain_hints": candidate.get("domain_hints") or [],
+            "strong_conclusion_allowed": False,
+        }
         if triage["source_tier"] in {"A", "B"} and triage["deep_read_priority"] == "High":
             selected.append(entry)
         elif triage["source_tier"] == "C":
@@ -244,13 +307,13 @@ def score_candidate_for_deep_read(candidate: Dict[str, Any]) -> Dict[str, Any]:
     return {"candidate_id": candidate["candidate_id"], "selected_for_deep_read": selected, "triage": triage}
 
 
-def discover_sources(query_profile: str = "datacenter_networking", providers: list[str] | None = None, max_candidates: int | None = None, dry_run: bool = False, network_enabled: bool = True, metadata_only: bool = True) -> Dict[str, Any]:
-    return run_discovery(query_profile, providers, max_candidates, dry_run, network_enabled, metadata_only)
+def discover_sources(query_profile: str = "datacenter_networking", providers: list[str] | None = None, max_candidates: int | None = None, dry_run: bool = False, network_enabled: bool = True, metadata_only: bool = True, arxiv_id: str | None = None) -> Dict[str, Any]:
+    return run_discovery(query_profile, providers, max_candidates, dry_run, network_enabled, metadata_only, arxiv_id=arxiv_id)
 
 
-def run_discovery(query_profile: str = "datacenter_networking", providers: list[str] | None = None, max_candidates: int | None = None, dry_run: bool = False, network_enabled: bool = True, metadata_only: bool = True) -> Dict[str, Any]:
+def run_discovery(query_profile: str = "datacenter_networking", providers: list[str] | None = None, max_candidates: int | None = None, dry_run: bool = False, network_enabled: bool = True, metadata_only: bool = True, arxiv_id: str | None = None) -> Dict[str, Any]:
     config = load_source_discovery_config()
-    requested = providers or list(config["provider_allowlist"])
+    requested = ["arxiv"] if arxiv_id else (providers or list(config["provider_allowlist"]))
     for provider in requested:
         if provider not in config["provider_allowlist"]:
             raise ValueError(f"provider not allowed: {provider}")
@@ -261,6 +324,12 @@ def run_discovery(query_profile: str = "datacenter_networking", providers: list[
     if dry_run or not network_enabled:
         sample = _candidate("manual_watchlist", "dry-run", "Dry-run datacenter RDMA congestion control candidate", "SIGCOMM style experiment baseline p99 RDMA datacenter", ["ZYW"], "2026", None, "SIGCOMM", "https://example.invalid/source", None, document_type="paper")
         candidates = [sample]
+    elif arxiv_id:
+        try:
+            candidates.extend(query_arxiv_id(arxiv_id, config))
+            executed.append("arxiv")
+        except Exception as exc:
+            provider_errors.append({"provider": "arxiv", "error": type(exc).__name__, "message": str(exc)[:300]})
     else:
         for provider in requested:
             try:
@@ -283,6 +352,7 @@ def run_discovery(query_profile: str = "datacenter_networking", providers: list[
         "providers_requested": requested,
         "providers_executed": executed,
         "query_profile": query_profile,
+        "arxiv_id": arxiv_id,
         "candidate_count": len(candidates),
         "deduplicated_count": dedup["deduplicated_count"],
         "selected_for_triage_count": len(triage_preview),

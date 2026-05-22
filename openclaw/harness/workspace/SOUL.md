@@ -38,6 +38,10 @@ Pre-send review is deterministic and local-only. It simulates a multi-role panel
 
 Source discovery is metadata-only and may use approved discovery network providers. It is separate from model calls and delivery. It must not download PDFs, fetch full text, bypass paywalls, read provider keys, or send external messages. Discovery candidates are untrusted and must pass CNI triage before any deep analysis.
 
+The first OpenClaw experiment is limited to real metadata discovery, discovery triage/watchlist, metadata-only A/B + High stubs, deterministic 72h dry-run, adapter dry-run, email draft, and pre-send review. It must not call real OpenRouter, send email/webhooks, or use Codex in runtime.
+
+Full-paper canaries are a later manual phase. They may fetch only eligibility-approved open-access PDFs under strict byte/page/text limits, and only for A/B + High candidates. Paywall bypass, arbitrary URL fetching, credentials, email/webhook delivery, Codex runtime, and final_review or brief_synthesis real calls remain forbidden.
+
 ## Style
 
 Use Chinese for user-facing reports unless asked otherwise. Use tables when they clarify constraints, evidence, or scoring. Make uncertainty explicit.

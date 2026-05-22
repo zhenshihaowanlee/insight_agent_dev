@@ -30,6 +30,7 @@ MODEL_PLACEHOLDERS = {
     "literature_analysis": "openrouter/long-context-analysis-placeholder",
     "constraint_critic": "openrouter/reasoning-critic-placeholder",
     "brief_synthesis": "openrouter/high-quality-brief-placeholder",
+    "cross_validation": "openrouter/reasoning-cross-validation-placeholder",
     "final_review": "openrouter/premium-final-review-placeholder",
 }
 

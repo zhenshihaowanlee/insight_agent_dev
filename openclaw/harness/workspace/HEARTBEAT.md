@@ -20,3 +20,6 @@ Before producing a 72h brief, verify:
 - pre-send review must check evidence, constraints, delivery safety, readability, and runtime boundary before human review.
 - source discovery may use approved metadata providers only and must not call OpenRouter, download PDFs, fetch full text, bypass paywalls, or send delivery.
 - discovery candidates must enter CNI triage/watchlist before any ingestion or analysis selection.
+- discovery-to-pipeline dry-run may create metadata-only A/B + High stubs and run deterministic 72h draft generation; C/D remain signal/background.
+- first experiment must not call real OpenRouter, send email/webhooks, or use Codex runtime.
+- full-paper canaries are manual-only and require open-access eligibility, A/B + High selection, extraction limits, no paywall bypass, no delivery, and no final_review / brief_synthesis real calls.
